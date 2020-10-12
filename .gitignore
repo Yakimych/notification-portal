@@ -1,0 +1,14 @@
+.DS_Store
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.fake
+.ionide
+app.db
+Hangfire.db
+*.DotSettings.user
+publish_output/
+publish_output.zip
+farmer-deploy.json
