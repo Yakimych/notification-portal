@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NotificationPortal.Web.Data;
 using NotificationPortal.Web.Models;
 
@@ -9,13 +8,6 @@ namespace NotificationPortal.Web.Controllers
 {
     public class NotificationsController : Controller
     {
-        private readonly ILogger<NotificationsController> _logger;
-
-        public NotificationsController(ILogger<NotificationsController> logger)
-        {
-            _logger = logger;
-        }
-
         public IActionResult Index()
         {
             var notification1 = new Notification
