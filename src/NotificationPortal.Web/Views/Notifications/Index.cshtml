@@ -1,0 +1,33 @@
+﻿@model NotificationsViewModel
+
+@{
+    ViewData["Title"] = "Notifications Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Notifications</h1>
+    <div id="notification_list">
+        <table class="table">
+            <thead>
+                <th scope="col">Community</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Type</th>
+                <th scope="col">Date</th>
+            </thead>
+
+            <tbody>
+                @foreach (var notification in Model.Notifications)
+                {
+                    <tr>
+                        <td>@notification.CommunityName</td>
+                        <td>@notification.FromPlayer</td>
+                        <td>@notification.ToPlayer</td>
+                        <td>@notification.Type</td>
+                        <td>@notification.Date</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
