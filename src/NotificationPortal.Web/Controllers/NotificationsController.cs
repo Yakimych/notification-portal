@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using NotificationPortal.Web.Data;
 using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.Controllers
@@ -17,7 +18,7 @@ namespace NotificationPortal.Web.Controllers
 
         public IActionResult Index()
         {
-            var notification1 = new NotificationModel
+            var notification1 = new Notification
             {
                 CommunityName = "test",
                 FromPlayer = "player1",
@@ -26,7 +27,7 @@ namespace NotificationPortal.Web.Controllers
                 Date = DateTime.UtcNow
             };
 
-            var notification2 = new NotificationModel
+            var notification2 = new Notification
             {
                 CommunityName = "test",
                 FromPlayer = "player2",
@@ -35,7 +36,7 @@ namespace NotificationPortal.Web.Controllers
                 Date = DateTime.UtcNow
             };
 
-            var notification3 = new NotificationModel
+            var notification3 = new Notification
             {
                 CommunityName = "test2",
                 FromPlayer = "Player3",
@@ -46,7 +47,7 @@ namespace NotificationPortal.Web.Controllers
 
             var notificationsViewModel = new NotificationsViewModel
             {
-                Notifications = new List<NotificationModel> { notification1, notification2, notification3 }
+                Notifications = new List<Notification> { notification1, notification2, notification3 }
             };
 
             return View(notificationsViewModel);
