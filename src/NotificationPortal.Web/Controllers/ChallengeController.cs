@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using NotificationPortal.Web.Core;
 using NotificationPortal.Web.Data;
 using NotificationPortal.Web.Models;
 
@@ -11,10 +12,12 @@ namespace NotificationPortal.Web.Controllers
         public const string StatusMessageKey = "STATUS_MESSAGE";
 
         private readonly ApplicationDbContext _dbContext;
+        private readonly ChallengeService _challengeService;
 
-        public ChallengeController(ApplicationDbContext dbContext)
+        public ChallengeController(ApplicationDbContext dbContext, ChallengeService challengeService)
         {
             _dbContext = dbContext;
+            _challengeService = challengeService;
         }
 
         [HttpGet]
@@ -44,6 +47,9 @@ namespace NotificationPortal.Web.Controllers
             {
                 await _dbContext.Notifications.AddAsync(newNotification);
                 await _dbContext.SaveChangesAsync();
+
+                // TODO: Schedule via Hangfire
+                await _challengeService.SendMessage(model.CommunityName, model.FromPlayer, model.ToPlayer);
 
                 TempData[StatusMessageKey] = "Challenge queued for sending";
                 return RedirectToAction("SendChallenge");
