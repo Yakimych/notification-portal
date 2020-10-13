@@ -5,12 +5,12 @@ namespace NotificationPortal.Web.Models
     public class SendChallengeModel
     {
         [Required]
-        public string CommunityName { get; init; }
+        public string CommunityName { get; set; }
 
         [Required]
-        public string FromPlayer { get; init; }
+        public string FromPlayer { get; set; }
 
         [Required]
-        public string ToPlayer { get; init; }
+        public string ToPlayer { get; set; }
     }
 }

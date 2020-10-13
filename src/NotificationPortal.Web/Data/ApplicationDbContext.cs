@@ -23,16 +23,16 @@ namespace NotificationPortal.Web.Data
 
     public class Notification
     {
-        public int Id { get; init; }
+        public int Id { get; set; }
 
-        public string CommunityName { get; init; }
+        public string CommunityName { get; set; }
 
-        public string FromPlayer { get; init; }
+        public string FromPlayer { get; set; }
 
-        public string ToPlayer { get; init; }
+        public string ToPlayer { get; set; }
 
-        public ChallengeType Type { get; init; }
+        public ChallengeType Type { get; set; }
 
-        public DateTime Date { get; init; }
+        public DateTime Date { get; set; }
     }
 }

@@ -6,6 +6,7 @@ riderModule.iml
 /_ReSharper.Caches/
 .fake
 .ionide
+.idea
 app.db
 Hangfire.db
 *.DotSettings.user
