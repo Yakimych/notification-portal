@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +33,14 @@ namespace NotificationPortal.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
 
+            services.AddHangfire(configuration =>
+                configuration
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSQLiteStorage()
+            );
+            services.AddHangfireServer();
+
             services.AddScoped<ChallengeService>();
         }
 
@@ -49,6 +59,8 @@ namespace NotificationPortal.Web
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseHangfireDashboard();
 
             app.UseRouting();
 

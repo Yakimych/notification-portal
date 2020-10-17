@@ -1,16 +1,13 @@
-﻿@using NotificationPortal.Web.Controllers
-
-@model SendChallengeModel
+﻿@model SendChallengeModel
 
 @{
     ViewData["Title"] = "Challenge Test Page";
-    var statusMessage = (string)ViewData[ChallengeController.StatusMessageKey];
 }
 
 <div class="text-center">
     <h1 class="display-4">Test send challenge</h1>
-    @if (!string.IsNullOrWhiteSpace(statusMessage)) {
-        <div class="alert alert-primary" role="alert">@statusMessage</div>
+    @if (!string.IsNullOrWhiteSpace(Model.RequestStatusMessage)) {
+        <div class="alert alert-primary" role="alert">@Model.RequestStatusMessage</div>
     }
     <div></div>
     <div>
@@ -30,7 +27,7 @@
                 @Html.TextBoxFor(model => model.ToPlayer)
                 @Html.ValidationMessageFor(model => model.ToPlayer)
             </div>
-            
+
             <button type="submit">Send</button>
         </form>
     </div>

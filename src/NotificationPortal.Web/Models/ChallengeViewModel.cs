@@ -12,5 +12,7 @@ namespace NotificationPortal.Web.Models
 
         [Required]
         public string ToPlayer { get; set; }
+
+        public string RequestStatusMessage { get; set; }
     }
 }
