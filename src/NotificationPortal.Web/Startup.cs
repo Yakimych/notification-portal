@@ -61,13 +61,13 @@ namespace NotificationPortal.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseHangfireDashboard("/hangfire",
-                new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
-
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseHangfireDashboard("/hangfire",
+                new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
 
             app.UseEndpoints(endpoints =>
             {
