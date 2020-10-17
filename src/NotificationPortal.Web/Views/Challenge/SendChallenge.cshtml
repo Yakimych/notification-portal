@@ -9,7 +9,6 @@
     @if (!string.IsNullOrWhiteSpace(Model.RequestStatusMessage)) {
         <div class="alert alert-primary" role="alert">@Model.RequestStatusMessage</div>
     }
-    <div></div>
     <div>
         <form method="POST" asp-controller="Challenge" asp-action="SendChallenge">
             <div>

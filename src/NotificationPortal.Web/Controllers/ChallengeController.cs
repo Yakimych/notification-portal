@@ -25,6 +25,12 @@ namespace NotificationPortal.Web.Controllers
             return View(new SendChallengeModel());
         }
 
+        [HttpGet]
+        public IActionResult ChallengeList()
+        {
+            return View(new ChallengeListViewModel());
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendChallenge(SendChallengeModel model)
