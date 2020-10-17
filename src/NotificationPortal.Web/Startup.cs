@@ -1,4 +1,5 @@
 using Hangfire;
+using Hangfire.Dashboard;
 using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -60,7 +61,8 @@ namespace NotificationPortal.Web
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseHangfireDashboard();
+            app.UseHangfireDashboard("/hangfire",
+                new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
 
             app.UseRouting();
 
@@ -74,6 +76,18 @@ namespace NotificationPortal.Web
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+        }
+
+        public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+        {
+            public bool Authorize(DashboardContext context)
+            {
+                var httpContext = context.GetHttpContext();
+
+                // Allow all authenticated users to see the Dashboard
+                // TODO: Restrict to admin
+                return httpContext.User.Identity.IsAuthenticated;
+            }
         }
     }
 }
