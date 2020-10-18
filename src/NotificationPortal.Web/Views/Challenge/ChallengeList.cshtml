@@ -1,15 +1,59 @@
-﻿@model ChallengeListViewModel
+﻿@using NotificationPortal.Web.Data
+@model ChallengeListViewModel
 
 @{
     ViewData["Title"] = "Challenge List";
+
+    string GetStatusColor(ChallengeType challengeType)
+    {
+        switch (challengeType)
+        {
+            case ChallengeType.Accepted:
+                return "lightgreen";
+            case ChallengeType.Declined:
+                return "darkorange";
+            case ChallengeType.Challenged:
+            default:
+                return "white";
+        }
+    }
 }
 
 <div class="text-center">
     <h1 class="display-4">Challenges</h1>
-    <div>
-        [Placeholder]
-        <button id="sendButton">Test</button>
+    <div id="notification_list">
+        <table class="table">
+            <thead>
+                <th scope="col">Community</th>
+                <th scope="col">From</th>
+                <th scope="col">To</th>
+                <th scope="col">Type</th>
+                <th scope="col">Date</th>
+                <th scope="col">Action</th>
+            </thead>
+
+            <tbody>
+                @foreach (var challenge in Model.Challenges)
+                {
+                    <tr>
+                        <td>@challenge.CommunityName</td>
+                        <td>@challenge.FromPlayer</td>
+                        <td>@challenge.ToPlayer</td>
+                        <td style="background-color: @GetStatusColor(challenge.Type)" class="challenge-type" data-id="@challenge.Id">@challenge.Type</td>
+                        <td>@challenge.Date</td>
+                        <td>
+                            @if (challenge.Type == ChallengeType.Challenged)
+                            {
+                                <button class="accept-challenge-button" disabled data-id="@challenge.Id">Accept</button>
+                                <button class="decline-challenge-button" disabled data-id="@challenge.Id">Decline</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
+    <button id="sendButton">Test</button>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/chat.js"></script>
+<script src="~/js/challenges.js"></script>

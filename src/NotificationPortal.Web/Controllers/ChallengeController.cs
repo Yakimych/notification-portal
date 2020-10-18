@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +34,39 @@ namespace NotificationPortal.Web.Controllers
         public IActionResult ChallengeList()
         {
             _logger.Log(LogLevel.Information, "ChallengeList action called");
-            return View(new ChallengeListViewModel());
+            return View(new ChallengeListViewModel
+            {
+                Challenges = new List<Notification>
+                {
+                    new Notification
+                    {
+                        Id = 1,
+                        CommunityName = "test",
+                        FromPlayer = "testPlayer1",
+                        ToPlayer = "testPlayer2",
+                        Date = DateTime.Now,
+                        Type = ChallengeType.Challenged
+                    },
+                    new Notification
+                    {
+                        Id = 2,
+                        CommunityName = "test",
+                        FromPlayer = "testPlayer3",
+                        ToPlayer = "testPlayer4",
+                        Date = DateTime.Now,
+                        Type = ChallengeType.Accepted
+                    },
+                    new Notification
+                    {
+                        Id = 3,
+                        CommunityName = "test",
+                        FromPlayer = "testPlayer5",
+                        ToPlayer = "testPlayer6",
+                        Date = DateTime.Now,
+                        Type = ChallengeType.Declined
+                    }
+                }
+            });
         }
 
         [HttpPost]

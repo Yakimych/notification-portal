@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NotificationPortal.Web.Core;
-using SignalRChat.Hubs;
+using NotificationPortal.Web.Hubs;
 
 namespace NotificationPortal.Web
 {
@@ -77,7 +77,8 @@ namespace NotificationPortal.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
-                endpoints.MapHub<ChatHub>("/chathub");
+
+                endpoints.MapHub<ChallengeHub>("/challengehub");
             });
         }
 
