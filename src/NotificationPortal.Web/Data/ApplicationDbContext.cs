@@ -1,13 +1,23 @@
 ﻿using System;
+using IdentityServer4.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace NotificationPortal.Web.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+
+    // public class ApplicationUser : IdentityUser
+    // {
+    // }
+
+    public class ApplicationDbContext : ApiAuthorizationDbContext<IdentityUser> //IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options,
+            IOptions<OperationalStoreOptions> operationalStoreOptions)
+            : base(options, operationalStoreOptions)
         {
         }
 
