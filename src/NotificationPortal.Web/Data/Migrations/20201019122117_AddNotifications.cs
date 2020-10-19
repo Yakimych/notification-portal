@@ -11,13 +11,13 @@ namespace NotificationPortal.Web.Data.Migrations
                 name: "Notifications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    CommunityName = table.Column<string>(type: "TEXT", nullable: true),
-                    FromPlayer = table.Column<string>(type: "TEXT", nullable: true),
-                    ToPlayer = table.Column<string>(type: "TEXT", nullable: true),
-                    Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    Date = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    CommunityName = table.Column<string>(nullable: true),
+                    FromPlayer = table.Column<string>(nullable: true),
+                    ToPlayer = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
+                    Date = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
