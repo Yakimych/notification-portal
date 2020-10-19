@@ -45,7 +45,7 @@ namespace NotificationPortal.Web.Controllers
                         FromPlayer = "testPlayer1",
                         ToPlayer = "testPlayer2",
                         Date = DateTime.Now,
-                        Type = ChallengeType.Challenged
+                        Status = ChallengeStatus.Challenged
                     },
                     new Notification
                     {
@@ -54,7 +54,7 @@ namespace NotificationPortal.Web.Controllers
                         FromPlayer = "testPlayer3",
                         ToPlayer = "testPlayer4",
                         Date = DateTime.Now,
-                        Type = ChallengeType.Accepted
+                        Status = ChallengeStatus.Accepted
                     },
                     new Notification
                     {
@@ -63,7 +63,7 @@ namespace NotificationPortal.Web.Controllers
                         FromPlayer = "testPlayer5",
                         ToPlayer = "testPlayer6",
                         Date = DateTime.Now,
-                        Type = ChallengeType.Declined
+                        Status = ChallengeStatus.Declined
                     }
                 }
             });
@@ -81,7 +81,7 @@ namespace NotificationPortal.Web.Controllers
                 CommunityName = model.CommunityName,
                 FromPlayer = model.FromPlayer,
                 ToPlayer = model.ToPlayer,
-                Type = ChallengeType.Challenged,
+                Status = ChallengeStatus.Challenged,
                 Date = DateTime.UtcNow
             };
 

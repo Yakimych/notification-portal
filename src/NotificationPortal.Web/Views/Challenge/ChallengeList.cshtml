@@ -4,15 +4,28 @@
 @{
     ViewData["Title"] = "Challenge List";
 
-    string GetStatusColor(ChallengeType challengeType)
+    bool ShowSpinner(ChallengeStatus challengeStatus)
     {
-        switch (challengeType)
+        switch (challengeStatus)
         {
-            case ChallengeType.Accepted:
+            case ChallengeStatus.Challenging:
+            case ChallengeStatus.Accepting:
+            case ChallengeStatus.Declining:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    string GetStatusColor(ChallengeStatus challengeStatus)
+    {
+        switch (challengeStatus)
+        {
+            case ChallengeStatus.Accepted:
                 return "lightgreen";
-            case ChallengeType.Declined:
+            case ChallengeStatus.Declined:
                 return "darkorange";
-            case ChallengeType.Challenged:
+            case ChallengeStatus.Challenged:
             default:
                 return "white";
         }
@@ -29,31 +42,41 @@
                 <th scope="col">To</th>
                 <th scope="col">Type</th>
                 <th scope="col">Date</th>
-                <th scope="col">Action</th>
+                <th scope="col" style="width: 150px">Action</th>
             </thead>
 
-            <tbody>
-                @foreach (var challenge in Model.Challenges)
-                {
-                    <tr>
-                        <td>@challenge.CommunityName</td>
-                        <td>@challenge.FromPlayer</td>
-                        <td>@challenge.ToPlayer</td>
-                        <td style="background-color: @GetStatusColor(challenge.Type)" class="challenge-type" data-id="@challenge.Id">@challenge.Type</td>
-                        <td>@challenge.Date</td>
-                        <td>
-                            @if (challenge.Type == ChallengeType.Challenged)
-                            {
-                                <button class="accept-challenge-button" disabled data-id="@challenge.Id">Accept</button>
-                                <button class="decline-challenge-button" disabled data-id="@challenge.Id">Decline</button>
-                            }
-                        </td>
-                    </tr>
-                }
+            <tbody id="challengeListTableBody">
+            @foreach (var challenge in Model.Challenges)
+            {
+                <tr>
+                    <td>@challenge.CommunityName</td>
+                    <td>@challenge.FromPlayer</td>
+                    <td>@challenge.ToPlayer</td>
+                    <td style="background-color: @GetStatusColor(challenge.Status)" class="challenge-status-cell" data-id="@challenge.Id">
+                        @{if (ShowSpinner(challenge.Status))
+                          {
+                              <div class="loader">Waiting...</div>
+                          }
+                          else
+                          {
+                              @challenge.Status
+                          }
+                        }
+                    </td>
+                    <td class="date-cell">@challenge.Date.FormatDateTime()</td>
+                    <td>
+                        @if (challenge.Status == ChallengeStatus.Challenged)
+                        {
+                            <button class="accept-challenge-button" disabled data-id="@challenge.Id">Accept</button>
+                            <button class="decline-challenge-button" disabled data-id="@challenge.Id">Decline</button>
+                        }
+                    </td>
+                </tr>
+            }
             </tbody>
         </table>
     </div>
-    <button id="sendButton">Test</button>
+    <button id="newChallengeButton">New</button>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/challenges.js"></script>

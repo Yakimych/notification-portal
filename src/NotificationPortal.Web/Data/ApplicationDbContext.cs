@@ -14,10 +14,13 @@ namespace NotificationPortal.Web.Data
         public DbSet<Notification> Notifications { get; set; }
     }
 
-    public enum ChallengeType
+    public enum ChallengeStatus
     {
+        Challenging,
         Challenged,
+        Accepting,
         Accepted,
+        Declining,
         Declined
     }
 
@@ -31,7 +34,7 @@ namespace NotificationPortal.Web.Data
 
         public string ToPlayer { get; set; }
 
-        public ChallengeType Type { get; set; }
+        public ChallengeStatus Status { get; set; }
 
         public DateTime Date { get; set; }
     }
