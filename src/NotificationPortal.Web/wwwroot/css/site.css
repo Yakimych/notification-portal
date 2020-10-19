@@ -117,3 +117,12 @@ body {
 .accept-challenge-button, .decline-challenge-button, .date-cell, .challenge-status-cell {
   font-size: small;
 }
+
+.connection-status-indicator {
+  position: absolute;
+  left: 0;
+  bottom: 50px;
+  height: 20px;
+  width: 100%;
+  background-color: yellow;
+}

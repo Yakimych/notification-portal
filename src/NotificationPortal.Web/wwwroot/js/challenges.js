@@ -1,8 +1,21 @@
 "use strict";
 
+const connectionStatusIndicator = document.getElementById("connectionStatusIndicator");
+
 const connection = new signalR.HubConnectionBuilder()
+  .withAutomaticReconnect()
   .withUrl("/challengehub")
   .build();
+
+connection.onreconnecting(() => {
+  connectionStatusIndicator.style.backgroundColor = "red";
+  console.log("Reconnecting...");
+});
+
+connection.onreconnected(() => {
+  connectionStatusIndicator.style.backgroundColor = "lightgreen";
+  console.log("Reconnected!");
+});
 
 const acceptButtons = document.getElementsByClassName(
   "accept-challenge-button"
@@ -41,6 +54,8 @@ connection.on("NewChallengeIssued", function (
   );
 
   const tr = document.createElement("tr");
+  const idTd = document.createElement("td");
+  idTd.innerText = challengeId;
   const communityNameTd = document.createElement("td");
   communityNameTd.innerText = communityName;
   const fromPlayerTd = document.createElement("td");
@@ -74,6 +89,7 @@ connection.on("NewChallengeIssued", function (
   buttonsTd.appendChild(acceptButton);
   buttonsTd.appendChild(declineButton);
 
+  tr.appendChild(idTd);
   tr.appendChild(communityNameTd);
   tr.appendChild(fromPlayerTd);
   tr.appendChild(toPlayerTd);
@@ -161,6 +177,7 @@ function declineClickEventListener(event) {
 connection
   .start()
   .then(function () {
+    connectionStatusIndicator.style.backgroundColor = "lightgreen";
     for (const acceptButton of acceptButtons) {
       acceptButton.disabled = false;
       acceptButton.addEventListener("click", acceptClickEventListener);

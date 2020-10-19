@@ -9,14 +9,14 @@ using NotificationPortal.Web.Data;
 namespace NotificationPortal.Web.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20201019122117_AddNotifications")]
-    partial class AddNotifications
+    [Migration("20201019215034_NotificationsAndChallenges")]
+    partial class NotificationsAndChallenges
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8");
+                .HasAnnotation("ProductVersion", "3.1.9");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -214,7 +214,7 @@ namespace NotificationPortal.Web.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("NotificationPortal.Web.Data.Notification", b =>
+            modelBuilder.Entity("NotificationPortal.Web.Data.ChallengeEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,6 +236,40 @@ namespace NotificationPortal.Web.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.ToTable("ChallengeEntries");
+                });
+
+            modelBuilder.Entity("NotificationPortal.Web.Data.ChallengeNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChallengeEntryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirebaseResponse")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FromPlayer")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Topic")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChallengeEntryId");
 
                     b.ToTable("Notifications");
                 });
@@ -287,6 +321,15 @@ namespace NotificationPortal.Web.Data.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("NotificationPortal.Web.Data.ChallengeNotification", b =>
+                {
+                    b.HasOne("NotificationPortal.Web.Data.ChallengeEntry", "Challenge")
+                        .WithMany()
+                        .HasForeignKey("ChallengeEntryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

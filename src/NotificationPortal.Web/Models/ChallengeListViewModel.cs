@@ -5,6 +5,6 @@ namespace NotificationPortal.Web.Models
 {
     public class ChallengeListViewModel
     {
-        public List<Notification> Challenges { get; set; }
+        public List<ChallengeEntry> Challenges { get; set; }
     }
 }
