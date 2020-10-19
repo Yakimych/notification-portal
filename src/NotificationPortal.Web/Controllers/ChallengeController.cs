@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NotificationPortal.Web.Core;
 using NotificationPortal.Web.Data;
+using NotificationPortal.Web.Hubs;
 using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.Controllers
@@ -14,14 +17,16 @@ namespace NotificationPortal.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly ChallengeService _challengeService;
-        private readonly ILogger<HomeController> _logger;
+        private readonly IHubContext<ChallengeHub> _challengeHubContext;
 
         public ChallengeController(
-            ApplicationDbContext dbContext, ChallengeService challengeService, ILogger<HomeController> logger)
+            ApplicationDbContext dbContext,
+            ChallengeService challengeService,
+            IHubContext<ChallengeHub> challengeHubContext)
         {
             _dbContext = dbContext;
             _challengeService = challengeService;
-            _logger = logger;
+            _challengeHubContext = challengeHubContext;
         }
 
         [HttpGet]
@@ -31,42 +36,10 @@ namespace NotificationPortal.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChallengeList()
+        public async Task<IActionResult> ChallengeList()
         {
-            _logger.Log(LogLevel.Information, "ChallengeList action called");
-            return View(new ChallengeListViewModel
-            {
-                Challenges = new List<Notification>
-                {
-                    new Notification
-                    {
-                        Id = 1,
-                        CommunityName = "test",
-                        FromPlayer = "testPlayer1",
-                        ToPlayer = "testPlayer2",
-                        Date = DateTime.Now,
-                        Status = ChallengeStatus.Challenged
-                    },
-                    new Notification
-                    {
-                        Id = 2,
-                        CommunityName = "test",
-                        FromPlayer = "testPlayer3",
-                        ToPlayer = "testPlayer4",
-                        Date = DateTime.Now,
-                        Status = ChallengeStatus.Accepted
-                    },
-                    new Notification
-                    {
-                        Id = 3,
-                        CommunityName = "test",
-                        FromPlayer = "testPlayer5",
-                        ToPlayer = "testPlayer6",
-                        Date = DateTime.Now,
-                        Status = ChallengeStatus.Declined
-                    }
-                }
-            });
+            var notifications = await _dbContext.Notifications.ToListAsync();
+            return View(new ChallengeListViewModel { Challenges = notifications });
         }
 
         [HttpPost]
@@ -90,8 +63,19 @@ namespace NotificationPortal.Web.Controllers
                 await _dbContext.Notifications.AddAsync(newNotification);
                 await _dbContext.SaveChangesAsync();
 
+                // TODO: Can we pass a slimmed down version of the notification object instead?
+                await _challengeHubContext.Clients.All.SendAsync(
+                    "NewChallengeIssued",
+                    newNotification.Id,
+                    newNotification.CommunityName,
+                    newNotification.FromPlayer,
+                    newNotification.ToPlayer,
+                    ChallengeStatus.Challenging.ToString(),
+                    newNotification.Date.FormatDateTime());
+
                 BackgroundJob.Enqueue(() =>
-                    _challengeService.SendMessage(model.CommunityName, model.FromPlayer, model.ToPlayer));
+                    _challengeService.InitiateChallenge(newNotification.Id, model.CommunityName, model.FromPlayer,
+                        model.ToPlayer));
 
                 model.RequestStatusMessage = "Challenge queued for sending";
                 return View(model);

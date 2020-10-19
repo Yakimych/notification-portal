@@ -1,53 +1,36 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using FirebaseAdmin;
-using FirebaseAdmin.Messaging;
-using Google.Apis.Auth.OAuth2;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.SignalR;
+using NotificationPortal.Web.Data;
+using NotificationPortal.Web.Hubs;
 
 namespace NotificationPortal.Web.Core
 {
     public class ChallengeService
     {
-        private readonly IConfiguration _configuration;
+        private readonly FirebaseMessagingService _firebaseMessagingService;
+        private readonly IHubContext<ChallengeHub> _challengeHubContext;
+        private readonly ApplicationDbContext _dbContext;
 
-        public ChallengeService(IConfiguration configuration)
+        public ChallengeService(
+            FirebaseMessagingService firebaseMessagingService, ApplicationDbContext dbContext,
+            IHubContext<ChallengeHub> challengeHubContext)
         {
-            _configuration = configuration;
+            _firebaseMessagingService = firebaseMessagingService;
+            _dbContext = dbContext;
+            _challengeHubContext = challengeHubContext;
         }
 
-        public Task<string> SendMessage(string communityName, string fromPlayer, string toPlayer)
+        public async Task InitiateChallenge(int notificationId, string communityName, string fromPlayer, string toPlayer)
         {
-            var topic = $"{communityName}_{toPlayer}";
-            var notificationMessage = $"{communityName}: {fromPlayer} has challenged you to a game!";
+            // TODO: Is it possible to handle errors here? Test with spaces in player names
+            await _firebaseMessagingService.SendMessage(communityName, fromPlayer, toPlayer);
 
-            var message = new Message
-            {
-                Data = new Dictionary<string, string>
-                {
-                    { "message", notificationMessage },
-                    { "communityName", communityName },
-                    { "fromPlayer", fromPlayer },
-                    { "toPlayer", toPlayer }
-                },
-                Topic = topic,
-                Notification = new Notification
-                {
-                    Title = "New challenge!",
-                    Body = notificationMessage
-                }
-            };
+            var notificationToUpdate = await _dbContext.Notifications.FindAsync(notificationId);
+            notificationToUpdate.Status = ChallengeStatus.Challenged;
+            await _dbContext.SaveChangesAsync();
 
-            if (FirebaseApp.DefaultInstance == null)
-            {
-                var notificationJsonString = _configuration["firebase_json"];
-                FirebaseApp.Create(new AppOptions
-                {
-                    Credential = GoogleCredential.FromJson(notificationJsonString)
-                });
-            }
-
-            return FirebaseMessaging.DefaultInstance.SendAsync(message);
+            await _challengeHubContext.Clients.All.SendAsync("ChallengeStatusChanged", notificationId,
+                ChallengeStatus.Challenged.ToString());
         }
     }
 }

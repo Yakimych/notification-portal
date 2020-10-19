@@ -44,6 +44,7 @@ namespace NotificationPortal.Web
             );
             services.AddHangfireServer();
 
+            services.AddScoped<FirebaseMessagingService>();
             services.AddScoped<ChallengeService>();
         }
 
