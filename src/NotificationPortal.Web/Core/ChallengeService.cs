@@ -57,8 +57,7 @@ namespace NotificationPortal.Web.Core
         {
             // TODO: Is it possible to handle errors here? Test with spaces in player names and try/catch
             var challengeNotification =
-                await _firebaseMessagingService.SendMessage(challenge.CommunityName, challenge.FromPlayer,
-                    challenge.ToPlayer);
+                await _firebaseMessagingService.SendMessage(challenge);
 
             // Update Challenge status and timestamp
             _dbContext.ChallengeEntries.Attach(challenge);
@@ -78,11 +77,7 @@ namespace NotificationPortal.Web.Core
         {
             // TODO: Is it possible to handle errors here? Test with spaces in player names and try/catch
             var challengeNotification =
-                await _firebaseMessagingService.SendMessageResponseToChallenge(
-                    communityName: challenge.CommunityName,
-                    respondingPlayer: challenge.ToPlayer,
-                    playerThatChallenged: challenge.FromPlayer,
-                    response);
+                await _firebaseMessagingService.SendMessageResponseToChallenge(challenge, response);
 
             // Update Challenge status and timestamp
             _dbContext.ChallengeEntries.Attach(challenge);

@@ -18,21 +18,22 @@ namespace NotificationPortal.Web.Core
             _configuration = configuration;
         }
 
-        public async Task<ChallengeNotification> SendMessage(string communityName, string fromPlayer, string toPlayer)
+        public async Task<ChallengeNotification> SendMessage(ChallengeEntry challenge)
         {
-            var topic = $"{communityName}_{toPlayer}";
-            var notificationMessage = $"{communityName}: {fromPlayer} has challenged you to a game!";
+            var encodedTopic = $"{challenge.CommunityName}_{challenge.ToPlayer}".Base64UrlEncode();
+            var notificationMessage = $"{challenge.CommunityName}: {challenge.FromPlayer} has challenged you to a game!";
 
             var message = new Message
             {
                 Data = new Dictionary<string, string>
                 {
-                    { "message", notificationMessage },
-                    { "communityName", communityName },
-                    { "fromPlayer", fromPlayer },
-                    { "toPlayer", toPlayer }
+                    { "challengeId", challenge.Id.ToString() },
+                    { "message", notificationMessage }, // TODO: Remove, since it is already passed as the Body?
+                    { "communityName", challenge.CommunityName },
+                    { "fromPlayer", challenge.FromPlayer },
+                    { "toPlayer", challenge.ToPlayer }
                 },
-                Topic = topic,
+                Topic = encodedTopic,
                 Notification = new Notification
                 {
                     Title = "New challenge!",
@@ -54,9 +55,9 @@ namespace NotificationPortal.Web.Core
             // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
             return new ChallengeNotification
             {
-                Topic = topic,
+                Topic = encodedTopic,
                 Message = notificationMessage,
-                FromPlayer = fromPlayer,
+                FromPlayer = challenge.FromPlayer,
                 Date = DateTime.UtcNow,
                 FirebaseResponse = messageResult,
                 Type = NotificationType.Challenged // TODO: take in type as method parameter?
@@ -64,25 +65,29 @@ namespace NotificationPortal.Web.Core
         }
 
         public async Task<ChallengeNotification> SendMessageResponseToChallenge(
-            string communityName, string respondingPlayer, string playerThatChallenged, NotificationType response)
+            ChallengeEntry challenge, NotificationType response)
         {
             var responseString = response.ToString().ToLower();
 
-            var topic = $"{communityName}_{playerThatChallenged}";
+            var playerThatChallenged = challenge.FromPlayer;
+            var respondingPlayer = challenge.ToPlayer;
+
+            var encodedTopic = $"{challenge.CommunityName}_{playerThatChallenged}".Base64UrlEncode();
             var notificationMessage =
-                $"{communityName}: {playerThatChallenged} has {responseString} your challenge!";
+                $"{challenge.CommunityName}: {playerThatChallenged} has {responseString} your challenge!";
 
             var message = new Message
             {
                 Data = new Dictionary<string, string>
                 {
-                    { "message", notificationMessage },
-                    { "communityName", communityName },
+                    { "challengeId", challenge.Id.ToString() },
+                    { "message", notificationMessage }, // TODO: Remove, since it is already passed as the Body?
+                    { "communityName", challenge.CommunityName },
                     { "responseType", response.ToString() },
                     { "fromPlayer", respondingPlayer },
                     { "toPlayer", playerThatChallenged }
                 },
-                Topic = topic,
+                Topic = encodedTopic,
                 Notification = new Notification
                 {
                     Title = $"Challenge {responseString}",
@@ -104,7 +109,7 @@ namespace NotificationPortal.Web.Core
             // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
             return new ChallengeNotification
             {
-                Topic = topic,
+                Topic = encodedTopic,
                 Message = notificationMessage,
                 FromPlayer = respondingPlayer,
                 Date = DateTime.UtcNow,
