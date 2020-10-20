@@ -15,6 +15,7 @@
     <div id="notification_list">
         <table class="table">
             <thead>
+                <th scope="col">ChallengeId</th>
                 <th scope="col">Topic</th>
                 <th scope="col">Message</th>
                 <th scope="col">From</th>
@@ -27,6 +28,7 @@
                 @foreach (var notification in Model.Notifications.OrderByDescending(n => n.Date))
                 {
                     <tr>
+                        <td>@notification.ChallengeEntryId</td>
                         <td>@WithRawTopic(notification.Topic)</td>
                         <td>@notification.Message</td>
                         <td>@notification.FromPlayer</td>

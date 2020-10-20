@@ -74,7 +74,7 @@ namespace NotificationPortal.Web.Core
 
             var encodedTopic = $"{challenge.CommunityName}_{playerThatChallenged}".Base64UrlEncode();
             var notificationMessage =
-                $"{challenge.CommunityName}: {playerThatChallenged} has {responseString} your challenge!";
+                $"{challenge.CommunityName}: {respondingPlayer} has {responseString} your challenge!";
 
             var message = new Message
             {
