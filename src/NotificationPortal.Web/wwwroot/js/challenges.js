@@ -1,6 +1,8 @@
 "use strict";
 
-const connectionStatusIndicator = document.getElementById("connectionStatusIndicator");
+const connectionStatusIndicator = document.getElementById(
+  "connectionStatusIndicator"
+);
 
 const connection = new signalR.HubConnectionBuilder()
   .withAutomaticReconnect()
@@ -191,10 +193,4 @@ connection
   })
   .catch(function (err) {
     return console.error(err.toString());
-  });
-
-document
-  .getElementById("newChallengeButton")
-  .addEventListener("click", function () {
-    connection.invoke("NewChallenge");
   });

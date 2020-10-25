@@ -41,9 +41,24 @@ namespace NotificationPortal.Web.Core
                 }
             };
 
+            var challengeNotificaton = new ChallengeNotification
+            {
+                Topic = encodedTopic,
+                Message = notificationMessage,
+                FromPlayer = challenge.FromPlayer,
+                Date = DateTime.UtcNow,
+                Type = NotificationType.Challenged // TODO: take in type as method parameter?
+            };
+
+            var notificationJsonString = _configuration["firebase_json"];
+            if (string.IsNullOrEmpty(notificationJsonString))
+            {
+                challengeNotificaton.FirebaseResponse = "Mock response - Firebase configuration missing";
+                return challengeNotificaton;
+            }
+
             if (FirebaseApp.DefaultInstance == null)
             {
-                var notificationJsonString = _configuration["firebase_json"];
                 FirebaseApp.Create(new AppOptions
                 {
                     Credential = GoogleCredential.FromJson(notificationJsonString)
@@ -53,15 +68,8 @@ namespace NotificationPortal.Web.Core
             var messageResult = await FirebaseMessaging.DefaultInstance.SendAsync(message);
 
             // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
-            return new ChallengeNotification
-            {
-                Topic = encodedTopic,
-                Message = notificationMessage,
-                FromPlayer = challenge.FromPlayer,
-                Date = DateTime.UtcNow,
-                FirebaseResponse = messageResult,
-                Type = NotificationType.Challenged // TODO: take in type as method parameter?
-            };
+            challengeNotificaton.FirebaseResponse = messageResult;
+            return challengeNotificaton;
         }
 
         public async Task<ChallengeNotification> SendMessageResponseToChallenge(
@@ -95,9 +103,23 @@ namespace NotificationPortal.Web.Core
                 }
             };
 
+            var challengeNotificaton = new ChallengeNotification
+            {
+                Topic = encodedTopic,
+                Message = notificationMessage,
+                FromPlayer = challenge.FromPlayer,
+                Date = DateTime.UtcNow,
+                Type = NotificationType.Challenged // TODO: take in type as method parameter?
+            };
+
+            var notificationJsonString = _configuration["firebase_json"];
+            if (string.IsNullOrEmpty(notificationJsonString))
+            {
+                challengeNotificaton.FirebaseResponse = "Mock response - Firebase configuration missing";
+                return challengeNotificaton;
+            }
             if (FirebaseApp.DefaultInstance == null)
             {
-                var notificationJsonString = _configuration["firebase_json"];
                 FirebaseApp.Create(new AppOptions
                 {
                     Credential = GoogleCredential.FromJson(notificationJsonString)
@@ -107,15 +129,8 @@ namespace NotificationPortal.Web.Core
             var messageResult = await FirebaseMessaging.DefaultInstance.SendAsync(message);
 
             // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
-            return new ChallengeNotification
-            {
-                Topic = encodedTopic,
-                Message = notificationMessage,
-                FromPlayer = respondingPlayer,
-                Date = DateTime.UtcNow,
-                FirebaseResponse = messageResult,
-                Type = response
-            };
+            challengeNotificaton.FirebaseResponse = messageResult;
+            return challengeNotificaton;
         }
     }
 }

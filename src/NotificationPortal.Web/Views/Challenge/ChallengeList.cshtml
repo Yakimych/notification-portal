@@ -67,7 +67,7 @@
                     </td>
                     <td class="date-cell">@challenge.Date.FormatDateTime()</td>
                     <td>
-                        @if (challenge.Status == ChallengeStatus.Challenged)
+                        @if (challenge.Status == ChallengeStatus.Challenged || challenge.Status == ChallengeStatus.Challenging)
                         {
                             <button class="accept-challenge-button" disabled data-id="@challenge.Id">Accept</button>
                             <button class="decline-challenge-button" disabled data-id="@challenge.Id">Decline</button>
@@ -78,8 +78,6 @@
             </tbody>
         </table>
     </div>
-    @* TODO: Remove *@
-    <button id="newChallengeButton">New</button>
     <div class="connection-status-indicator" id="connectionStatusIndicator"></div>
 </div>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
