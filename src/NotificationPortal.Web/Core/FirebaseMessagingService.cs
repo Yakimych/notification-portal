@@ -28,17 +28,13 @@ namespace NotificationPortal.Web.Core
                 Data = new Dictionary<string, string>
                 {
                     { "challengeId", challenge.Id.ToString() },
-                    { "message", notificationMessage }, // TODO: Remove, since it is already passed as the Body?
+                    { "title", "New Challenge!" },
+                    { "message", notificationMessage },
                     { "communityName", challenge.CommunityName },
                     { "fromPlayer", challenge.FromPlayer },
                     { "toPlayer", challenge.ToPlayer }
                 },
-                Topic = encodedTopic,
-                Notification = new Notification
-                {
-                    Title = "New challenge!",
-                    Body = notificationMessage
-                }
+                Topic = encodedTopic
             };
 
             var challengeNotificaton = new ChallengeNotification
@@ -89,18 +85,14 @@ namespace NotificationPortal.Web.Core
                 Data = new Dictionary<string, string>
                 {
                     { "challengeId", challenge.Id.ToString() },
-                    { "message", notificationMessage }, // TODO: Remove, since it is already passed as the Body?
+                    { "title", $"Challenge {responseString}" },
+                    { "message", notificationMessage },
                     { "communityName", challenge.CommunityName },
                     { "responseType", response.ToString() },
                     { "fromPlayer", respondingPlayer },
                     { "toPlayer", playerThatChallenged }
                 },
-                Topic = encodedTopic,
-                Notification = new Notification
-                {
-                    Title = $"Challenge {responseString}",
-                    Body = notificationMessage
-                }
+                Topic = encodedTopic
             };
 
             var challengeNotificaton = new ChallengeNotification
