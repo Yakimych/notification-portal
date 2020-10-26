@@ -4,11 +4,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
-module.exports = {
+// TODO: Is it possuble to use Microsoft.TypeScript.MSBuild for development-mode instead?
+module.exports = (env, argv) => ({
   entry: "./src/index.ts",
   output: {
     path: path.resolve(__dirname, "wwwroot/transpiled"),
-    filename: "[name].[chunkhash].js",
+    filename: `[name]${argv.mode === "development" ? "" : ".[chunkhash]"}.js`,
     publicPath: "/",
   },
   resolve: {
@@ -32,4 +33,4 @@ module.exports = {
       filename: "css/[name].[chunkhash].css",
     }),
   ],
-};
+});

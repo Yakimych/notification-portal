@@ -80,5 +80,9 @@
     </div>
     <div class="connection-status-indicator" id="connectionStatusIndicator"></div>
 </div>
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/challenges.js"></script>
+<environment names="Development">
+    <script src="/transpiled/main.js"></script>
+</environment>
+<environment names="Production">
+    <script asp-src-include="~/transpiled/main*.js"></script>
+</environment>
