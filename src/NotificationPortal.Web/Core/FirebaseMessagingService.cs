@@ -18,12 +18,9 @@ namespace NotificationPortal.Web.Core
             _configuration = configuration;
         }
 
-        // TODO: Remove the override
-        public async Task<ChallengeNotification> SendMessage(ChallengeEntry challenge, string topicOverride)
+        public async Task<ChallengeNotification> SendMessage(ChallengeEntry challenge)
         {
-            var encodedTopic = String.IsNullOrWhiteSpace(topicOverride)
-                ? $"{challenge.CommunityName}_{challenge.ToPlayer}".Base64UrlEncode()
-                : topicOverride;
+            var encodedTopic = $"{challenge.CommunityName}_{challenge.ToPlayer}".Base64UrlEncode();
             var notificationMessage = $"{challenge.CommunityName}: {challenge.FromPlayer} has challenged you to a game!";
 
             var notificationTitle = "New Challenge!";

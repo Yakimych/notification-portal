@@ -48,16 +48,16 @@ namespace NotificationPortal.Web.Core
                 newChallenge.Status.ToString(),
                 newChallenge.Date.FormatDateTime());
 
-            BackgroundJob.Enqueue(() => InitiateChallenge(newChallenge, model.TopicOverride));
+            BackgroundJob.Enqueue(() => InitiateChallenge(newChallenge));
 
             return newChallenge;
         }
 
-        public async Task InitiateChallenge(ChallengeEntry challenge, string topicOverride)
+        public async Task InitiateChallenge(ChallengeEntry challenge)
         {
             // TODO: Is it possible to handle errors here? Test with spaces in player names and try/catch
             var challengeNotification =
-                await _firebaseMessagingService.SendMessage(challenge, topicOverride);
+                await _firebaseMessagingService.SendMessage(challenge);
 
             // Update Challenge status and timestamp
             _dbContext.ChallengeEntries.Attach(challenge);
