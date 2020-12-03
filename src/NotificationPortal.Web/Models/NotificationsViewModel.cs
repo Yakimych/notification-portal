@@ -3,8 +3,8 @@ using NotificationPortal.Web.Data;
 
 namespace NotificationPortal.Web.Models
 {
-    public class NotificationsViewModel
+    public record NotificationsViewModel
     {
-        public List<ChallengeNotification> Notifications { get; set; }
+        public List<ChallengeNotification> Notifications { get; init; }
     }
 }

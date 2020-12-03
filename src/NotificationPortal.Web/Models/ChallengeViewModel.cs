@@ -2,17 +2,17 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NotificationPortal.Web.Models
 {
-    public class SendChallengeModel
+    public record SendChallengeModel
     {
         [Required]
-        public string CommunityName { get; set; }
+        public string CommunityName { get; init; }
 
         [Required]
-        public string FromPlayer { get; set; }
+        public string FromPlayer { get; init; }
 
         [Required]
-        public string ToPlayer { get; set; }
+        public string ToPlayer { get; init; }
 
-        public string RequestStatusMessage { get; set; }
+        public string RequestStatusMessage { get; init; }
     }
 }

@@ -44,14 +44,11 @@ namespace NotificationPortal.Web.Controllers
             try
             {
                 await _challengeService.CreateChallengeSendNotificationAndSaveEverythingToTheDatabase(model);
-
-                model.RequestStatusMessage = "Challenge queued for sending";
-                return View(model);
+                return View(model with { RequestStatusMessage = "Challenge queued for sending" });
             }
             catch (Exception ex)
             {
-                model.RequestStatusMessage = $"Error: {ex.Message}"; // TODO: Log exception instead
-                return View(model);
+                return View(model with { RequestStatusMessage = $"Error: {ex.Message}" }); // TODO: Log exception instead
             }
         }
     }
