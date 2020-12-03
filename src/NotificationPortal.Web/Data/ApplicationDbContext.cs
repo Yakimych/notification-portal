@@ -11,8 +11,8 @@ namespace NotificationPortal.Web.Data
         {
         }
 
-        public DbSet<ChallengeNotification> Notifications { get; set; }
-        public DbSet<ChallengeEntry> ChallengeEntries { get; set; }
+        public DbSet<ChallengeNotification> Notifications { get; init; }
+        public DbSet<ChallengeEntry> ChallengeEntries { get; init; }
     }
 
     public enum NotificationType
