@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using NotificationPortal.Web.Data;
 using NotificationPortal.Web.Hubs;
 using NotificationPortal.Web.Models;
@@ -24,7 +25,8 @@ namespace NotificationPortal.Web.Core
         }
 
         // TODO: Do not pass the SendChallengeModel down to services
-        public async Task<ChallengeEntry> CreateChallengeSendNotificationAndSaveEverythingToTheDatabase(SendChallengeModel model)
+        public async Task<ChallengeEntry> CreateChallengeSendNotificationAndSaveEverythingToTheDatabase(
+            SendChallengeModel model)
         {
             var newChallenge = new ChallengeEntry
             {
@@ -60,17 +62,16 @@ namespace NotificationPortal.Web.Core
                 await _firebaseMessagingService.SendMessage(challenge);
 
             // Update Challenge status and timestamp
-            _dbContext.ChallengeEntries.Attach(challenge);
-            challenge.Date = DateTime.UtcNow;
-            challenge.Status = ChallengeStatus.Challenged;
+            var challengeToSave = challenge with { Date = DateTime.UtcNow, Status = ChallengeStatus.Challenged };
+            _dbContext.ChallengeEntries.Update(challengeToSave);
 
             // Save new Notification
-            challengeNotification.ChallengeEntryId = challenge.Id;
-            await _dbContext.Notifications.AddAsync(challengeNotification);
+            var challengeNotificationToSave = challengeNotification with { ChallengeEntryId = challengeToSave.Id };
+            await _dbContext.Notifications.AddAsync(challengeNotificationToSave);
             await _dbContext.SaveChangesAsync();
 
-            await _challengeHubContext.Clients.All.SendAsync("ChallengeStatusChanged", challenge.Id,
-                challenge.Status.ToString());
+            await _challengeHubContext.Clients.All.SendAsync("ChallengeStatusChanged", challengeToSave.Id,
+                challengeToSave.Status.ToString());
         }
 
         public async Task RespondToChallenge(ChallengeEntry challenge, NotificationType response)
@@ -80,37 +81,46 @@ namespace NotificationPortal.Web.Core
                 await _firebaseMessagingService.SendMessageResponseToChallenge(challenge, response);
 
             // Update Challenge status and timestamp
-            _dbContext.ChallengeEntries.Attach(challenge);
-            challenge.Date = DateTime.UtcNow;
-            challenge.Status = response == NotificationType.Accepted
-                ? ChallengeStatus.Accepted
-                : ChallengeStatus.Declined;
+            var challengeToSave =
+                challenge with
+                    {
+                        Date = DateTime.UtcNow,
+                        Status =
+                        response == NotificationType.Accepted
+                            ? ChallengeStatus.Accepted
+                            : ChallengeStatus.Declined
+                    };
+            _dbContext.ChallengeEntries.Update(challengeToSave);
 
             // Save new Notification
-            challengeNotification.ChallengeEntryId = challenge.Id;
-            await _dbContext.Notifications.AddAsync(challengeNotification);
+            var challengeNotificationToSave = challengeNotification with { ChallengeEntryId = challengeToSave.Id };
+            await _dbContext.Notifications.AddAsync(challengeNotificationToSave);
             await _dbContext.SaveChangesAsync();
 
-            await _challengeHubContext.Clients.All.SendAsync("ChallengeStatusChanged", challenge.Id,
-                challenge.Status.ToString());
+            await _challengeHubContext.Clients.All.SendAsync("ChallengeStatusChanged", challengeToSave.Id,
+                challengeToSave.Status.ToString());
         }
 
+        // TODO: SetStatus?
         public async Task<OperationResult> AcceptChallenge(int challengeId)
         {
             var challengeToAccept = await _dbContext.ChallengeEntries.FindAsync(challengeId);
             if (challengeToAccept == null)
                 return OperationResult.NotFound;
 
-            challengeToAccept.Status = ChallengeStatus.Accepting;
+            var acceptedChallenge = challengeToAccept with { Status = ChallengeStatus.Accepting };
+            _dbContext.Entry(challengeToAccept).State = EntityState.Detached;
+            _dbContext.Update(acceptedChallenge);
+
             await _dbContext.SaveChangesAsync();
 
             // TODO: Extract into service/function
             await _challengeHubContext.Clients.All.SendAsync(
                 "ChallengeStatusChanged",
-                challengeToAccept.Id,
-                challengeToAccept.Status.ToString());
+                acceptedChallenge.Id,
+                acceptedChallenge.Status.ToString());
 
-            BackgroundJob.Enqueue(() => RespondToChallenge(challengeToAccept, NotificationType.Accepted));
+            BackgroundJob.Enqueue(() => RespondToChallenge(acceptedChallenge, NotificationType.Accepted));
 
             return OperationResult.Ok;
         }
@@ -121,16 +131,18 @@ namespace NotificationPortal.Web.Core
             if (challengeToDecline == null)
                 return OperationResult.NotFound;
 
-            challengeToDecline.Status = ChallengeStatus.Declining;
+            var declinedChallenge = challengeToDecline with { Status = ChallengeStatus.Declining };
+            _dbContext.Entry(challengeToDecline).State = EntityState.Detached;
+            _dbContext.Update(declinedChallenge);
             await _dbContext.SaveChangesAsync();
 
             // TODO: Extract into service/function
             await _challengeHubContext.Clients.All.SendAsync(
                 "ChallengeStatusChanged",
-                challengeToDecline.Id,
-                challengeToDecline.Status.ToString());
+                declinedChallenge.Id,
+                declinedChallenge.Status.ToString());
 
-            BackgroundJob.Enqueue(() => RespondToChallenge(challengeToDecline, NotificationType.Declined));
+            BackgroundJob.Enqueue(() => RespondToChallenge(declinedChallenge, NotificationType.Declined));
 
             return OperationResult.Ok;
         }

@@ -43,7 +43,7 @@ namespace NotificationPortal.Web.Core
                 Topic = encodedTopic
             };
 
-            var challengeNotificaton = new ChallengeNotification
+            var challengeNotification = new ChallengeNotification
             {
                 Topic = encodedTopic,
                 Message = notificationMessage,
@@ -55,8 +55,7 @@ namespace NotificationPortal.Web.Core
             var notificationJsonString = _configuration["firebase_json"];
             if (string.IsNullOrEmpty(notificationJsonString))
             {
-                challengeNotificaton.FirebaseResponse = "Mock response - Firebase configuration missing";
-                return challengeNotificaton;
+                return challengeNotification with { FirebaseResponse = "Mock response - Firebase configuration missing" };
             }
 
             if (FirebaseApp.DefaultInstance == null)
@@ -70,8 +69,7 @@ namespace NotificationPortal.Web.Core
             var messageResult = await FirebaseMessaging.DefaultInstance.SendAsync(message);
 
             // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
-            challengeNotificaton.FirebaseResponse = messageResult;
-            return challengeNotificaton;
+            return challengeNotification with { FirebaseResponse = messageResult };
         }
 
         public async Task<ChallengeNotification> SendMessageResponseToChallenge(
@@ -113,8 +111,7 @@ namespace NotificationPortal.Web.Core
             var notificationJsonString = _configuration["firebase_json"];
             if (string.IsNullOrEmpty(notificationJsonString))
             {
-                challengeNotificaton.FirebaseResponse = "Mock response - Firebase configuration missing";
-                return challengeNotificaton;
+                return challengeNotificaton with { FirebaseResponse = "Mock response - Firebase configuration missing" };
             }
             if (FirebaseApp.DefaultInstance == null)
             {
@@ -127,8 +124,7 @@ namespace NotificationPortal.Web.Core
             var messageResult = await FirebaseMessaging.DefaultInstance.SendAsync(message);
 
             // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
-            challengeNotificaton.FirebaseResponse = messageResult;
-            return challengeNotificaton;
+            return challengeNotificaton with { FirebaseResponse = messageResult };
         }
     }
 }

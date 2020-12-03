@@ -32,39 +32,39 @@ namespace NotificationPortal.Web.Data
         Declined
     }
 
-    public class ChallengeEntry
+    public record ChallengeEntry
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public string CommunityName { get; set; }
+        public string CommunityName { get; init; }
 
-        public string FromPlayer { get; set; }
+        public string FromPlayer { get; init; }
 
-        public string ToPlayer { get; set; }
+        public string ToPlayer { get; init; }
 
-        public ChallengeStatus Status { get; set; }
+        public ChallengeStatus Status { get; init; }
 
-        public DateTime Date { get; set; }
+        public DateTime Date { get; init; }
     }
 
-    public class ChallengeNotification
+    public record ChallengeNotification
     {
-        public int Id { get; set; }
+        public int Id { get; init; }
 
-        public int ChallengeEntryId { get; set; }
+        public int ChallengeEntryId { get; init; }
 
-        public ChallengeEntry Challenge { get; set; }
+        public ChallengeEntry Challenge { get; init; }
 
-        public string Topic { get; set; }
+        public string Topic { get; init; }
 
-        public string Message { get; set; }
+        public string Message { get; init; }
 
-        public string FromPlayer { get; set; }
+        public string FromPlayer { get; init; }
 
-        public string FirebaseResponse { get; set; }
+        public string FirebaseResponse { get; init; }
 
-        public NotificationType Type { get; set; }
+        public NotificationType Type { get; init; }
 
-        public DateTime Date { get; set; }
+        public DateTime Date { get; init; }
     }
 }
