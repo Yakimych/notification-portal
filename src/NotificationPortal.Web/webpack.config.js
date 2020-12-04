@@ -1,12 +1,11 @@
 const path = require("path");
-// const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const frontendDirName = "frontend";
 const getFileInFrontendDir = (fileName) => `./${frontendDirName}/${fileName}`;
 
-module.exports = (env, argv) => ({
+module.exports = {
   entry: {
     index: getFileInFrontendDir("index.ts"),
     challenges: getFileInFrontendDir("challenges.ts"),
@@ -15,7 +14,7 @@ module.exports = (env, argv) => ({
   },
   output: {
     path: path.resolve(__dirname, "wwwroot/transpiled"),
-    filename: `[name]${argv.mode === "development" ? "" : ".[chunkhash]"}.js`,
+    filename: `[name].js`,
     publicPath: "/",
   },
   resolve: {
@@ -35,13 +34,8 @@ module.exports = (env, argv) => ({
   },
   plugins: [
     new CleanWebpackPlugin(),
-    // new HtmlWebpackPlugin({
-    //   template: "./src/index.html",
-    // }),
     new MiniCssExtractPlugin({
-      filename: `css/[name]${
-        argv.mode === "development" ? "" : ".[chunkhash]"
-      }.css`,
+      filename: `css/[name].css`,
     }),
   ],
-});
+};
