@@ -65,6 +65,8 @@ namespace NotificationPortal.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseDefaultFiles();
+            // app.UseStaticFiles();
 
             app.UseAuthentication();
             app.UseAuthorization();

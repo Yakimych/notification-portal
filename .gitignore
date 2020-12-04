@@ -13,3 +13,5 @@ Hangfire.db
 publish_output/
 publish_output.zip
 farmer-deploy.json
+**/node_modules/*
+**/wwwroot/transpiled/*
