@@ -24,6 +24,10 @@ jobs:
         run: dotnet build --configuration Release
         working-directory: ./src/NotificationPortal.Web
 
+      - name: Build frontend with npm
+        run: npm run release
+        working-directory: ./src/NotificationPortal.Web
+
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
         working-directory: ./src/NotificationPortal.Web
