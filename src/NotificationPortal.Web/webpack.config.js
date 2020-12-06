@@ -1,6 +1,7 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const VueLoaderPlugin = require("vue-loader/lib/plugin");
 
 const frontendDirName = "frontend";
 const getFileInFrontendDir = (fileName) => `./${frontendDirName}/${fileName}`;
@@ -18,20 +19,27 @@ module.exports = {
     publicPath: "/",
   },
   resolve: {
+    extensions: [".js", ".ts"],
     alias: {
       vue$: "vue/dist/vue.esm.js",
     },
-    extensions: [".js", ".ts"],
   },
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: "ts-loader",
+        loader: "ts-loader",
+        options: {
+          appendTsSuffixTo: [/\.vue$/],
+        },
       },
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, "css-loader"],
+      },
+      {
+        test: /\.vue$/,
+        loader: "vue-loader",
       },
     ],
   },
@@ -40,5 +48,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: `css/[name].css`,
     }),
+    new VueLoaderPlugin(),
   ],
 };

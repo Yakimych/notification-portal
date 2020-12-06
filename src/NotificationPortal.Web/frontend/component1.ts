@@ -1,10 +1,7 @@
 import Vue from "vue";
+import TestComponent from "./TestComponent.vue";
 
 console.log("Loaded component1.ts");
-
-const TestComponent = Vue.component("test-component", {
-  template: "<div>Vue-rendered content</div>",
-});
 
 var app = new Vue({
   el: "#vue_placeholder",
