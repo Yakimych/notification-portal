@@ -1,14 +1,17 @@
 <template>
   <div>
     <h1>TestComponent from .vue file</h1>
-    <span>{{ someText }}</span>
+    <span>Some text: {{ someText }}</span>
+    <child-component someProp="qwe" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import ChildComponent from "./ChildComponent.vue";
 
 const TestComponent = Vue.extend({
+  components: { ChildComponent },
   data: function () {
     return { someText: "Some text" };
   },
@@ -16,4 +19,3 @@ const TestComponent = Vue.extend({
 
 export default TestComponent;
 </script> 
-
