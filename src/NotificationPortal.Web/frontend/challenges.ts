@@ -10,12 +10,16 @@ const connection = new signalR.HubConnectionBuilder()
   .build();
 
 connection.onreconnecting(() => {
-  connectionStatusIndicator.style.backgroundColor = "red";
+  if (connectionStatusIndicator) {
+    connectionStatusIndicator.style.backgroundColor = "red";
+  }
   console.log("Reconnecting...");
 });
 
 connection.onreconnected(() => {
-  connectionStatusIndicator.style.backgroundColor = "lightgreen";
+  if (connectionStatusIndicator) {
+    connectionStatusIndicator.style.backgroundColor = "lightgreen";
+  }
   console.log("Reconnected!");
 });
 
@@ -26,7 +30,7 @@ const declineButtons = document.getElementsByClassName(
   "decline-challenge-button"
 );
 
-function findStatusCell(notificationId) {
+function findStatusCell(notificationId: number) {
   const allStatusCells = document.getElementsByClassName(
     "challenge-status-cell"
   );
@@ -98,11 +102,16 @@ connection.on(
     tr.appendChild(dateTd);
     tr.appendChild(buttonsTd);
 
-    document.getElementById("challengeListTableBody").prepend(tr);
+    const challengeListTableBody = document.getElementById(
+      "challengeListTableBody"
+    );
+    if (challengeListTableBody) {
+      challengeListTableBody.prepend(tr);
+    }
   }
 );
 
-function getColorForStatus(status) {
+function getColorForStatus(status: string) {
   switch (status) {
     case "Accepted":
       return "lightgreen";
@@ -113,7 +122,7 @@ function getColorForStatus(status) {
   }
 }
 
-function getHtmlForStatus(status) {
+function getHtmlForStatus(status: string) {
   switch (status) {
     case "Challenged":
     case "Accepted":
@@ -166,26 +175,34 @@ connection.on("ChallengeStatusChanged", function (challengeId, newStatus) {
   }
 });
 
-function acceptClickEventListener(event) {
-  const notificationId = Number(event.target.dataset.id);
-  connection.invoke("AcceptChallenge", notificationId).catch(function (err) {
-    return console.error(err.toString());
-  });
-  event.preventDefault();
+function acceptClickEventListener(event: MouseEvent) {
+  const eventTarget = event.target;
+  if (eventTarget instanceof HTMLElement) {
+    const notificationId = Number(eventTarget.dataset.id);
+    connection.invoke("AcceptChallenge", notificationId).catch(function (err) {
+      return console.error(err.toString());
+    });
+    event.preventDefault();
+  }
 }
 
-function declineClickEventListener(event) {
-  const notificationId = Number(event.target.dataset.id);
-  connection.invoke("DeclineChallenge", notificationId).catch(function (err) {
-    return console.error(err.toString());
-  });
-  event.preventDefault();
+function declineClickEventListener(event: MouseEvent) {
+  const eventTarget = event.target;
+  if (eventTarget instanceof HTMLElement) {
+    const notificationId = Number(eventTarget.dataset.id);
+    connection.invoke("DeclineChallenge", notificationId).catch(function (err) {
+      return console.error(err.toString());
+    });
+    event.preventDefault();
+  }
 }
 
 connection
   .start()
   .then(function () {
-    connectionStatusIndicator.style.backgroundColor = "lightgreen";
+    if (connectionStatusIndicator) {
+      connectionStatusIndicator.style.backgroundColor = "lightgreen";
+    }
     for (const acceptButton of Array.from(acceptButtons)) {
       if (acceptButton instanceof HTMLButtonElement) {
         acceptButton.disabled = false;
