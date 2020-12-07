@@ -7,10 +7,10 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 import ChildComponent from "./ChildComponent.vue";
 
-const TestComponent = Vue.extend({
+const TestComponent = defineComponent({
   components: { ChildComponent },
   data: function () {
     return { someText: "Some text" };

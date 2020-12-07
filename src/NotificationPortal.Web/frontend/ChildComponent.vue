@@ -12,9 +12,9 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-const ChildComponent = Vue.extend({
+const ChildComponent = defineComponent({
   props: {
     someProp: String,
   },
