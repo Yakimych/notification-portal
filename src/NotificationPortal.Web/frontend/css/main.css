@@ -128,5 +128,16 @@ body {
   bottom: 50px;
   height: 20px;
   width: 100%;
+}
+
+.connection-status-indicator.unknown {
   background-color: yellow;
+}
+
+.connection-status-indicator.disconnected {
+  background-color: red;
+}
+
+.connection-status-indicator.connected {
+  background-color: lightgreen;
 }
