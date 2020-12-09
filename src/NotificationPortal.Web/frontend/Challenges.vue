@@ -18,6 +18,9 @@
             v-for="challenge in challenges"
             :key="challenge.id"
             :challenge="challenge"
+            :isEnabled="canRespondToChallenges"
+            @accept-challenge="acceptChallenge"
+            @decline-challenge="declineChallenge"
           />
         </tbody>
       </table>
@@ -112,10 +115,17 @@ const Challenges = defineComponent({
       });
   },
   data: () => ({
-    someText: "Some text",
     connectionStatus: "Unknown" as ConnectionStatus,
     challenges: fakeChallenges,
   }),
+  methods: {
+    acceptChallenge(challenge: Challenge) {
+      challenge.type = "Accepting";
+    },
+    declineChallenge(challenge: Challenge) {
+      challenge.type = "Declining";
+    },
+  },
   computed: {
     connectionStatusBarClass() {
       switch (this.connectionStatus) {

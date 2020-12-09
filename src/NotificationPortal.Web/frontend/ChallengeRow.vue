@@ -1,5 +1,5 @@
 <template>
-  <tr v-if="challenge">
+  <tr>
     <td>{{ challenge.id }}</td>
     <td>{{ challenge.communityName }}</td>
     <td>{{ challenge.fromPlayer }}</td>
@@ -14,14 +14,14 @@
         <button
           class="accept-challenge-button"
           :disabled="!canRespondToChallenges"
-          data-id="@challenge.Id"
+          @click="emitAccept"
         >
           Accept
         </button>
         <button
           class="decline-challenge-button"
           :disabled="!canRespondToChallenges"
-          data-id="@challenge.Id"
+          @click="emitDecline"
         >
           Decline
         </button>
@@ -53,25 +53,35 @@ export type Challenge = {
 
 export default defineComponent({
   props: {
-    challenge: Object as PropType<Challenge>,
+    isEnabled: { type: Boolean, required: true },
+    challenge: { type: Object as PropType<Challenge>, required: true },
   },
   mounted: function () {},
   data: () => ({
     someText: "Some text",
   }),
+  methods: {
+    emitAccept() {
+      if (this.canRespondToChallenges) {
+        this.$emit("accept-challenge", this.challenge);
+      }
+    },
+    emitDecline() {
+      if (this.canRespondToChallenges) {
+        this.$emit("decline-challenge", this.challenge);
+      }
+    },
+  },
   computed: {
     challengeStatusClass() {
-      if (this.challenge !== undefined) {
-        switch (this.challenge.type) {
-          case "Accepted":
-            return "accepted";
-          case "Declined":
-            return "declined";
-          default:
-            return "";
-        }
+      switch (this.challenge.type) {
+        case "Accepted":
+          return "accepted";
+        case "Declined":
+          return "declined";
+        default:
+          return "";
       }
-      return "";
     },
     showSpinner(): boolean {
       const statesToShowSpinnerFor: ChallengeStatus[] = [
@@ -79,26 +89,20 @@ export default defineComponent({
         "Accepting",
         "Declining",
       ];
-      return (
-        this.challenge !== undefined &&
-        statesToShowSpinnerFor.includes(this.challenge.type)
-      );
+      return statesToShowSpinnerFor.includes(this.challenge.type);
     },
     showButtons(): boolean {
       const statesToShowButtonsFor: ChallengeStatus[] = [
         "Challenged",
         "Challenging",
       ];
-      return (
-        this.challenge !== undefined &&
-        statesToShowButtonsFor.includes(this.challenge.type)
-      );
+      return statesToShowButtonsFor.includes(this.challenge.type);
     },
     formattedDate(): string {
-      return this.challenge ? this.challenge.date.toLocaleDateString() : "";
+      return this.challenge.date.toLocaleDateString();
     },
     canRespondToChallenges(): boolean {
-      return true; // TODO: Combine information about being connected to the Hub, with the challenge status
+      return this.isEnabled && this.challenge.type === "Challenged";
     },
   },
 });
