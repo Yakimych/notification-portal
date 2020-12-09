@@ -17,7 +17,7 @@
           <div v-if="isLoadingChallenges">Loading...</div>
           <challenge-row
             v-else
-            v-for="challenge in challenges"
+            v-for="challenge in orderedChallenges"
             :key="challenge.id"
             :challenge="challenge"
             :isEnabled="canRespondToChallenges"
@@ -37,7 +37,7 @@
 import * as signalR from "@microsoft/signalr";
 import axios, { AxiosResponse } from "axios";
 import { defineComponent } from "vue";
-import ChallengeRow, { Challenge } from "./ChallengeRow.vue";
+import ChallengeRow, { Challenge, ChallengeStatus } from "./ChallengeRow.vue";
 
 type ConnectionStatus = "Unknown" | "Connected" | "Disconnected";
 
@@ -75,6 +75,29 @@ const Challenges = defineComponent({
         challengeToUpdate.type = newStatus;
       }
     });
+
+    this.connection.on(
+      "NewChallengeIssued",
+      (
+        challengeId: number,
+        communityName: string,
+        fromPlayer: string,
+        toPlayer: string,
+        status: ChallengeStatus,
+        date: string
+      ) => {
+        const challengeToAdd: Challenge = {
+          id: challengeId,
+          communityName,
+          fromPlayer,
+          toPlayer,
+          type: status,
+          date: new Date(date),
+        };
+
+        this.challenges.push(challengeToAdd);
+      }
+    );
 
     this.connection
       .start()
@@ -116,6 +139,19 @@ const Challenges = defineComponent({
     },
   },
   computed: {
+    orderedChallenges(): Challenge[] {
+      const byIdDesc = (c1: Challenge, c2: Challenge) => {
+        if (c1.id < c2.id) {
+          return 1;
+        } else if (c1.id > c2.id) {
+          return -1;
+        } else {
+          return 0;
+        }
+      };
+
+      return [...this.challenges].sort(byIdDesc);
+    },
     connectionStatusBarClass() {
       switch (this.connectionStatus) {
         case "Connected":
