@@ -35,73 +35,21 @@
 
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { defineComponent } from "vue";
 import ChallengeRow, { Challenge } from "./ChallengeRow.vue";
 
 type ConnectionStatus = "Unknown" | "Connected" | "Disconnected";
 
-const fakeChallenges: Challenge[] = [
-  {
-    id: 1,
-    communityName: "TestCommunity",
-    fromPlayer: "P11",
-    toPlayer: "P12",
-    type: "Challenging",
-    date: new Date(),
-  },
-  {
-    id: 2,
-    communityName: "TestCommunity",
-    fromPlayer: "P1",
-    toPlayer: "P2",
-    type: "Challenged",
-    date: new Date(),
-  },
-  {
-    id: 3,
-    communityName: "TestCommunity",
-    fromPlayer: "P3",
-    toPlayer: "P4",
-    type: "Accepting",
-    date: new Date(),
-  },
-  {
-    id: 4,
-    communityName: "TestCommunity",
-    fromPlayer: "P5",
-    toPlayer: "P6",
-    type: "Accepted",
-    date: new Date(),
-  },
-  {
-    id: 5,
-    communityName: "TestCommunity",
-    fromPlayer: "P7",
-    toPlayer: "P8",
-    type: "Declining",
-    date: new Date(),
-  },
-  {
-    id: 6,
-    communityName: "TestCommunity",
-    fromPlayer: "P9",
-    toPlayer: "P10",
-    type: "Declined",
-    date: new Date(),
-  },
-];
-
 const Challenges = defineComponent({
   components: { ChallengeRow },
   mounted: function () {
-    // TODO: Fetch challenges from /api/challenges
     axios
       .get("/api/challenges")
-      .then((response) => {
+      .then((response: AxiosResponse) => {
         console.log("Response data: ", response.data);
         // TODO: Decode/parse challenges (including date strings)
-        this.challenges = response.data;
+        this.challenges = response.data.challenges;
         this.isLoadingChallenges = false;
       })
       .catch((e) => {
@@ -110,20 +58,25 @@ const Challenges = defineComponent({
         this.isLoadingChallenges = false;
       });
 
-    const connection = new signalR.HubConnectionBuilder()
-      .withAutomaticReconnect()
-      .withUrl("/challengehub")
-      .build();
-
-    connection.onreconnecting(() => {
+    this.connection.onreconnecting(() => {
       this.connectionStatus = "Disconnected";
     });
 
-    connection.onreconnected(() => {
+    this.connection.onreconnected(() => {
       this.connectionStatus = "Connected";
     });
 
-    connection
+    this.connection.on("ChallengeStatusChanged", (challengeId, newStatus) => {
+      console.log("ChallengeStatusChanged: ", challengeId, newStatus);
+      const challengeToUpdate = this.challenges.find(
+        (c) => c.id === challengeId
+      );
+      if (challengeToUpdate !== undefined) {
+        challengeToUpdate.type = newStatus;
+      }
+    });
+
+    this.connection
       .start()
       .then(() => {
         this.connectionStatus = "Connected";
@@ -135,15 +88,31 @@ const Challenges = defineComponent({
   data: () => ({
     // TODO: DU for loading states
     isLoadingChallenges: true,
+    connection: new signalR.HubConnectionBuilder()
+      .withAutomaticReconnect()
+      .withUrl("/challengehub")
+      .build(),
     connectionStatus: "Unknown" as ConnectionStatus,
-    challenges: fakeChallenges,
+    challenges: [] as Challenge[],
   }),
   methods: {
     acceptChallenge(challenge: Challenge) {
       challenge.type = "Accepting";
+      this.connection
+        .invoke("AcceptChallenge", challenge.id)
+        .catch(function (err) {
+          // TODO: Handle error
+          console.log("Error accepting challenge: ", err);
+        });
     },
     declineChallenge(challenge: Challenge) {
       challenge.type = "Declining";
+      this.connection
+        .invoke("DeclineChallenge", challenge.id)
+        .catch(function (err) {
+          // TODO: Handle error
+          console.log("Error declining challenge: ", err);
+        });
     },
   },
   computed: {

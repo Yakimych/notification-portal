@@ -1,10 +1,25 @@
+using System;
 using System.Collections.Generic;
-using NotificationPortal.Web.Data;
 
 namespace NotificationPortal.Web.Models
 {
-    public record ChallengeListViewModel
+    public class ChallengeModel
     {
-        public List<ChallengeEntry> Challenges { get; init; }
+        public int Id { get; init; }
+
+        public string CommunityName { get; init; }
+
+        public string FromPlayer { get; init; }
+
+        public string ToPlayer { get; init; }
+
+        public string Type { get; init; }
+
+        public DateTime Date { get; init; }
+    }
+
+    public class ChallengeCollectionModel
+    {
+        public List<ChallengeModel> Challenges { get; init; }
     }
 }

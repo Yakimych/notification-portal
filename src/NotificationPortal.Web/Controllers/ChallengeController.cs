@@ -28,10 +28,9 @@ namespace NotificationPortal.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ChallengeList()
+        public IActionResult ChallengeList()
         {
-            var challengeEntries = await _dbContext.ChallengeEntries.ToListAsync();
-            return View(new ChallengeListViewModel { Challenges = challengeEntries });
+            return View();
         }
 
         [HttpPost]

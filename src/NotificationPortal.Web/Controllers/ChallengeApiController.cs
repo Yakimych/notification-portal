@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,10 @@ namespace NotificationPortal.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetChallenges()
         {
-            var challenges = await _dbContext.ChallengeEntries.ToListAsync();
-            return Ok(challenges);
+            var challenges =
+                await _dbContext.ChallengeEntries.Select(c => c.ToChallengeModel()).ToListAsync();
+
+            return Ok(new ChallengeCollectionModel { Challenges = challenges });
         }
 
         [HttpGet("{id}")]
