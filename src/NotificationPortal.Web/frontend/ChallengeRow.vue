@@ -8,7 +8,8 @@
       <div v-if="showSpinner" class="loader" />
       <div v-else>{{ challenge.type }}</div>
     </td>
-    <td class="date-cell">{{ formattedDate }}</td>
+    <!-- <td class="date-cell">{{ formattedDate }}</td> -->
+    <td class="date-cell">TODO</td>
     <td>
       <div v-if="showButtons">
         <button

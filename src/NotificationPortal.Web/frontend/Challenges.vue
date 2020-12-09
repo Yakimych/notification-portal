@@ -14,7 +14,9 @@
         </thead>
 
         <tbody id="challengeListTableBody">
+          <div v-if="isLoadingChallenges">Loading...</div>
           <challenge-row
+            v-else
             v-for="challenge in challenges"
             :key="challenge.id"
             :challenge="challenge"
@@ -33,6 +35,7 @@
 
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
+import axios from "axios";
 import { defineComponent } from "vue";
 import ChallengeRow, { Challenge } from "./ChallengeRow.vue";
 
@@ -92,6 +95,21 @@ const fakeChallenges: Challenge[] = [
 const Challenges = defineComponent({
   components: { ChallengeRow },
   mounted: function () {
+    // TODO: Fetch challenges from /api/challenges
+    axios
+      .get("/api/challenges")
+      .then((response) => {
+        console.log("Response data: ", response.data);
+        // TODO: Decode/parse challenges (including date strings)
+        this.challenges = response.data;
+        this.isLoadingChallenges = false;
+      })
+      .catch((e) => {
+        // TODO: GUI for error state
+        console.log("Error loading challenges: ", e);
+        this.isLoadingChallenges = false;
+      });
+
     const connection = new signalR.HubConnectionBuilder()
       .withAutomaticReconnect()
       .withUrl("/challengehub")
@@ -115,6 +133,8 @@ const Challenges = defineComponent({
       });
   },
   data: () => ({
+    // TODO: DU for loading states
+    isLoadingChallenges: true,
     connectionStatus: "Unknown" as ConnectionStatus,
     challenges: fakeChallenges,
   }),
