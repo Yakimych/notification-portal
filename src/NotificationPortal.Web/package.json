@@ -5,9 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "watch": "webpack --mode=development --watch",
-    "release": "webpack --mode=production",
-    "publish": "npm run release && dotnet publish -c Release"
+    "start": "webpack --mode=development --watch",
+    "release": "webpack --mode=production"
   },
   "author": "",
   "license": "ISC",
