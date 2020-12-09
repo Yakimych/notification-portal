@@ -122,6 +122,14 @@ body {
   font-size: small;
 }
 
+.challenge-status-cell.accepted {
+  background-color: lightgreen;
+}
+
+.challenge-status-cell.declined {
+  background-color: darkorange;
+}
+
 .connection-status-indicator {
   position: absolute;
   left: 0;

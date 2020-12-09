@@ -14,52 +14,11 @@
         </thead>
 
         <tbody id="challengeListTableBody">
-          <!-- @foreach (var challenge in Model.Challenges.OrderByDescending(c => c.Id))
-                { -->
-          <tr>
-            <td>@challenge.Id</td>
-            <td>@challenge.CommunityName</td>
-            <td>@challenge.FromPlayer</td>
-            <td>@challenge.ToPlayer</td>
-            <td
-              style="background-color: @GetStatusColor (challenge.Status)"
-              class="challenge-status-cell"
-              data-id="@challenge.Id"
-            >
-              <!-- @{
-                                if (ShowSpinner(challenge.Status))
-                                { -->
-              <div class="loader">Waiting...</div>
-              <!-- }
-                                else
-                                { -->
-              @challenge.Status
-              <!-- }
-                            } -->
-            </td>
-            <td class="date-cell">@challenge.Date.FormatDateTime()</td>
-            <td>
-              <!-- @if (challenge.Status == ChallengeStatus.Challenged || challenge.Status ==
-                                ChallengeStatus.Challenging)
-                            { -->
-              <button
-                class="accept-challenge-button"
-                :disabled="!canRespondToChallenges"
-                data-id="@challenge.Id"
-              >
-                Accept
-              </button>
-              <button
-                class="decline-challenge-button"
-                :disabled="!canRespondToChallenges"
-                data-id="@challenge.Id"
-              >
-                Decline
-              </button>
-              <!-- } -->
-            </td>
-          </tr>
-          <!-- } -->
+          <challenge-row
+            v-for="challenge in challenges"
+            :key="challenge.id"
+            :challenge="challenge"
+          />
         </tbody>
       </table>
     </div>
@@ -72,10 +31,63 @@
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
 import { defineComponent } from "vue";
+import ChallengeRow, { Challenge } from "./ChallengeRow.vue";
 
 type ConnectionStatus = "Unknown" | "Connected" | "Disconnected";
 
+const fakeChallenges: Challenge[] = [
+  {
+    id: 1,
+    communityName: "TestCommunity",
+    fromPlayer: "P11",
+    toPlayer: "P12",
+    type: "Challenging",
+    date: new Date(),
+  },
+  {
+    id: 2,
+    communityName: "TestCommunity",
+    fromPlayer: "P1",
+    toPlayer: "P2",
+    type: "Challenged",
+    date: new Date(),
+  },
+  {
+    id: 3,
+    communityName: "TestCommunity",
+    fromPlayer: "P3",
+    toPlayer: "P4",
+    type: "Accepting",
+    date: new Date(),
+  },
+  {
+    id: 4,
+    communityName: "TestCommunity",
+    fromPlayer: "P5",
+    toPlayer: "P6",
+    type: "Accepted",
+    date: new Date(),
+  },
+  {
+    id: 5,
+    communityName: "TestCommunity",
+    fromPlayer: "P7",
+    toPlayer: "P8",
+    type: "Declining",
+    date: new Date(),
+  },
+  {
+    id: 6,
+    communityName: "TestCommunity",
+    fromPlayer: "P9",
+    toPlayer: "P10",
+    type: "Declined",
+    date: new Date(),
+  },
+];
+
 const Challenges = defineComponent({
+  components: { ChallengeRow },
   mounted: function () {
     const connection = new signalR.HubConnectionBuilder()
       .withAutomaticReconnect()
@@ -102,6 +114,7 @@ const Challenges = defineComponent({
   data: () => ({
     someText: "Some text",
     connectionStatus: "Unknown" as ConnectionStatus,
+    challenges: fakeChallenges,
   }),
   computed: {
     connectionStatusBarClass() {
@@ -122,4 +135,4 @@ const Challenges = defineComponent({
 });
 
 export default Challenges;
-</script> 
+</script>
