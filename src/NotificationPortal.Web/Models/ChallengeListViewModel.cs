@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NotificationPortal.Web.Models
 {
-    // TODO: Use SwaggerSchema instead
+    // TODO: Use SwaggerSchema instead after this issue is resolved: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1920
     // [SwaggerSchema(Required = new[] { nameof(Id), nameof(ToPlayer) })]
     public class ChallengeModel
     {
