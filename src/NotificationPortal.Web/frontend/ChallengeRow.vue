@@ -8,8 +8,7 @@
       <div v-if="showSpinner" class="loader" />
       <div v-else>{{ challenge.type }}</div>
     </td>
-    <!-- <td class="date-cell">{{ formattedDate }}</td> -->
-    <td class="date-cell">TODO</td>
+    <td class="date-cell">{{ formattedDate }}</td>
     <td>
       <div v-if="showButtons">
         <button
@@ -57,10 +56,6 @@ export default defineComponent({
     isEnabled: { type: Boolean, required: true },
     challenge: { type: Object as PropType<Challenge>, required: true },
   },
-  mounted: function () {},
-  data: () => ({
-    someText: "Some text",
-  }),
   methods: {
     emitAccept() {
       if (this.canRespondToChallenges) {
