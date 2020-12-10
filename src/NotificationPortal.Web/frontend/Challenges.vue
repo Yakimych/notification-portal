@@ -35,21 +35,44 @@
 
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
-import axios, { AxiosResponse } from "axios";
+import { ChallengeApiApi } from "./api/apis/ChallengeApiApi";
+import { ChallengeModel } from "./api/models/ChallengeModel";
 import { defineComponent } from "vue";
 import ChallengeRow, { Challenge, ChallengeStatus } from "./ChallengeRow.vue";
 
 type ConnectionStatus = "Unknown" | "Connected" | "Disconnected";
 
+const toChallengeType = (typeString: string): ChallengeStatus => {
+  switch (typeString) {
+    case "Challenging":
+    case "Challenged":
+    case "Accepting":
+    case "Accepted":
+    case "Declining":
+    case "Declined":
+      return typeString;
+    default:
+      throw Error(`Challenge type: ${typeString} does not exist`);
+  }
+};
+
+const toChallenge = (challengeModel: ChallengeModel): Challenge => {
+  return {
+    ...challengeModel,
+    type: toChallengeType(challengeModel.type),
+  };
+};
+
 const Challenges = defineComponent({
   components: { ChallengeRow },
   mounted: function () {
-    axios
-      .get("/api/challenges")
-      .then((response: AxiosResponse) => {
-        console.log("Response data: ", response.data);
-        // TODO: Decode/parse challenges (including date strings)
-        this.challenges = response.data.challenges;
+    const challengeApi = new ChallengeApiApi();
+    challengeApi
+      .apiChallengesGet()
+      .then((response) => {
+        console.log("Response data: ", response);
+        this.challenges = response.challenges.map(toChallenge);
+
         this.isLoadingChallenges = false;
       })
       .catch((e) => {
