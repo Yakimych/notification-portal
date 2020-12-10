@@ -35,8 +35,8 @@
 
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
-import { ChallengeApiApi } from "./api/apis/ChallengeApiApi";
-import { ChallengeModel } from "./api/models/ChallengeModel";
+import { ChallengeApiApi, Configuration } from "./api";
+import { ChallengeModel } from "./api";
 import { defineComponent } from "vue";
 import ChallengeRow, { Challenge, ChallengeStatus } from "./ChallengeRow.vue";
 
@@ -66,7 +66,9 @@ const toChallenge = (challengeModel: ChallengeModel): Challenge => {
 const Challenges = defineComponent({
   components: { ChallengeRow },
   mounted: function () {
-    const challengeApi = new ChallengeApiApi();
+    const challengeApi = new ChallengeApiApi(
+      new Configuration({ basePath: "" })
+    );
     challengeApi
       .apiChallengesGet()
       .then((response) => {
