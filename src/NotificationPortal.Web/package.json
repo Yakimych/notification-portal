@@ -9,7 +9,7 @@
     "swagger-debug": "dotnet swagger tofile --output swagger.json  ./bin/Debug/net5.0/NotificationPortal.Web.dll v1",
     "swagger-release": "dotnet swagger tofile --output swagger.json  ./bin/Release/net5.0/NotificationPortal.Web.dll v1",
     "openapi": "openapi-generator-cli generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -i swagger.json -o frontend/api",
-    "release": "dotnet build -c Release && dotnet tool restore && npm run swagger-release && npm run openapi && webpack --mode=production"
+    "release": "dotnet tool restore && npm run swagger-release && npm run openapi && webpack --mode=production"
   },
   "author": "",
   "license": "ISC",
