@@ -16,3 +16,5 @@ farmer-deploy.json
 **/node_modules/*
 **/wwwroot/transpiled/*
 swagger.json
+openapitools.json
+
