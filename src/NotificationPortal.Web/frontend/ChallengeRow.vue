@@ -32,7 +32,7 @@
 
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 
 export type ChallengeStatus =
   | "Challenging"
@@ -56,6 +56,51 @@ export default defineComponent({
     isEnabled: { type: Boolean, required: true },
     challenge: { type: Object as PropType<Challenge>, required: true },
   },
+  setup(props) {
+    const challengeStatusClass = computed(() => {
+      switch (props.challenge.type) {
+        case "Accepted":
+          return "accepted";
+        case "Declined":
+          return "declined";
+        default:
+          return "";
+      }
+    });
+
+    const showSpinner = computed(() => {
+      const statesToShowSpinnerFor: ChallengeStatus[] = [
+        "Challenging",
+        "Accepting",
+        "Declining",
+      ];
+      return statesToShowSpinnerFor.includes(props.challenge.type);
+    });
+
+    const showButtons = computed(() => {
+      const statesToShowButtonsFor: ChallengeStatus[] = [
+        "Challenged",
+        "Challenging",
+      ];
+      return statesToShowButtonsFor.includes(props.challenge.type);
+    });
+
+    const canRespondToChallenges = computed(() => {
+      return props.isEnabled && props.challenge.type === "Challenged";
+    });
+
+    const formattedDate = computed(() => {
+      return props.challenge.date.toLocaleDateString();
+    });
+
+    return {
+      formattedDate,
+      challengeStatusClass,
+      showSpinner,
+      showButtons,
+      canRespondToChallenges,
+    };
+  },
   methods: {
     emitAccept() {
       if (this.canRespondToChallenges) {
@@ -66,39 +111,6 @@ export default defineComponent({
       if (this.canRespondToChallenges) {
         this.$emit("decline-challenge", this.challenge);
       }
-    },
-  },
-  computed: {
-    challengeStatusClass() {
-      switch (this.challenge.type) {
-        case "Accepted":
-          return "accepted";
-        case "Declined":
-          return "declined";
-        default:
-          return "";
-      }
-    },
-    showSpinner(): boolean {
-      const statesToShowSpinnerFor: ChallengeStatus[] = [
-        "Challenging",
-        "Accepting",
-        "Declining",
-      ];
-      return statesToShowSpinnerFor.includes(this.challenge.type);
-    },
-    showButtons(): boolean {
-      const statesToShowButtonsFor: ChallengeStatus[] = [
-        "Challenged",
-        "Challenging",
-      ];
-      return statesToShowButtonsFor.includes(this.challenge.type);
-    },
-    formattedDate(): string {
-      return this.challenge.date.toLocaleDateString();
-    },
-    canRespondToChallenges(): boolean {
-      return this.isEnabled && this.challenge.type === "Challenged";
     },
   },
 });
