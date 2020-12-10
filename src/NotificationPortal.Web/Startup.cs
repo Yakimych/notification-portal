@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NotificationPortal.Web.Core;
 using NotificationPortal.Web.Hubs;
+using Microsoft.OpenApi.Models;
 
 namespace NotificationPortal.Web
 {
@@ -34,6 +35,7 @@ namespace NotificationPortal.Web
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "NotificationPortal", Version = "v1" }));
             services.AddSignalR();
 
             services.AddHangfire(configuration =>
@@ -61,6 +63,10 @@ namespace NotificationPortal.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NotificationPortal Api v1"));
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

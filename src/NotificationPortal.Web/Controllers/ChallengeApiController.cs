@@ -24,7 +24,7 @@ namespace NotificationPortal.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetChallenges()
+        public async Task<ActionResult<ChallengeCollectionModel>> GetChallenges()
         {
             var challenges =
                 await _dbContext.ChallengeEntries.Select(c => c.ToChallengeModel()).ToListAsync();
