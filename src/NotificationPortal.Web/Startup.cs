@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using NotificationPortal.Web.Core;
 using NotificationPortal.Web.Hubs;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 namespace NotificationPortal.Web
 {
@@ -34,7 +35,9 @@ namespace NotificationPortal.Web
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            services.AddControllersWithViews();
+            services
+                .AddControllersWithViews()
+                .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "NotificationPortal", Version = "v1" }));
             services.AddSignalR();
 

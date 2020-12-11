@@ -6,7 +6,7 @@
     <td>{{ challenge.toPlayer }}</td>
     <td :class="['challenge-status-cell', challengeStatusClass]">
       <div v-if="showSpinner" class="loader" />
-      <div v-else>{{ challenge.type }}</div>
+      <div v-else>{{ challenge.status }}</div>
     </td>
     <td class="date-cell">{{ formattedDate }}</td>
     <td>
@@ -33,32 +33,16 @@
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
 import { computed, defineComponent, PropType } from "vue";
-
-export type ChallengeStatus =
-  | "Challenging"
-  | "Challenged"
-  | "Accepting"
-  | "Accepted"
-  | "Declining"
-  | "Declined";
-
-export type Challenge = {
-  id: number;
-  communityName: string;
-  fromPlayer: string;
-  toPlayer: string;
-  type: ChallengeStatus;
-  date: Date;
-};
+import { ChallengeModel, ChallengeStatus } from "./api/models";
 
 export default defineComponent({
   props: {
     isEnabled: { type: Boolean, required: true },
-    challenge: { type: Object as PropType<Challenge>, required: true },
+    challenge: { type: Object as PropType<ChallengeModel>, required: true },
   },
   setup(props) {
     const challengeStatusClass = computed(() => {
-      switch (props.challenge.type) {
+      switch (props.challenge.status) {
         case "Accepted":
           return "accepted";
         case "Declined":
@@ -70,23 +54,25 @@ export default defineComponent({
 
     const showSpinner = computed(() => {
       const statesToShowSpinnerFor: ChallengeStatus[] = [
-        "Challenging",
-        "Accepting",
-        "Declining",
+        ChallengeStatus.Challenging,
+        ChallengeStatus.Accepting,
+        ChallengeStatus.Declining,
       ];
-      return statesToShowSpinnerFor.includes(props.challenge.type);
+      return statesToShowSpinnerFor.includes(props.challenge.status);
     });
 
     const showButtons = computed(() => {
       const statesToShowButtonsFor: ChallengeStatus[] = [
-        "Challenged",
-        "Challenging",
+        ChallengeStatus.Challenged,
+        ChallengeStatus.Challenging,
       ];
-      return statesToShowButtonsFor.includes(props.challenge.type);
+      return statesToShowButtonsFor.includes(props.challenge.status);
     });
 
     const canRespondToChallenges = computed(() => {
-      return props.isEnabled && props.challenge.type === "Challenged";
+      return (
+        props.isEnabled && props.challenge.status === ChallengeStatus.Challenged
+      );
     });
 
     const formattedDate = computed(() => {

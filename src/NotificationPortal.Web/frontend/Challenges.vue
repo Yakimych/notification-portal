@@ -35,33 +35,12 @@
 
 <script lang="ts">
 import * as signalR from "@microsoft/signalr";
-import { ChallengeApiApi, Configuration } from "./api";
+import { ChallengeApiApi, ChallengeStatus, Configuration } from "./api";
 import { ChallengeModel } from "./api";
 import { defineComponent } from "vue";
-import ChallengeRow, { Challenge, ChallengeStatus } from "./ChallengeRow.vue";
+import ChallengeRow from "./ChallengeRow.vue";
 
 type ConnectionStatus = "Unknown" | "Connected" | "Disconnected";
-
-const toChallengeType = (typeString: string): ChallengeStatus => {
-  switch (typeString) {
-    case "Challenging":
-    case "Challenged":
-    case "Accepting":
-    case "Accepted":
-    case "Declining":
-    case "Declined":
-      return typeString;
-    default:
-      throw Error(`Challenge type: ${typeString} does not exist`);
-  }
-};
-
-const toChallenge = (challengeModel: ChallengeModel): Challenge => {
-  return {
-    ...challengeModel,
-    type: toChallengeType(challengeModel.type),
-  };
-};
 
 const Challenges = defineComponent({
   components: { ChallengeRow },
@@ -73,7 +52,7 @@ const Challenges = defineComponent({
       .apiChallengesGet()
       .then((response) => {
         console.log("Response data: ", response);
-        this.challenges = response.challenges.map(toChallenge);
+        this.challenges = response.challenges;
 
         this.isLoadingChallenges = false;
       })
@@ -97,7 +76,7 @@ const Challenges = defineComponent({
         (c) => c.id === challengeId
       );
       if (challengeToUpdate !== undefined) {
-        challengeToUpdate.type = newStatus;
+        challengeToUpdate.status = newStatus;
       }
     });
 
@@ -111,12 +90,12 @@ const Challenges = defineComponent({
         status: ChallengeStatus,
         date: string
       ) => {
-        const challengeToAdd: Challenge = {
+        const challengeToAdd: ChallengeModel = {
           id: challengeId,
           communityName,
           fromPlayer,
           toPlayer,
-          type: status,
+          status,
           date: new Date(date),
         };
 
@@ -141,11 +120,11 @@ const Challenges = defineComponent({
       .withUrl("/challengehub")
       .build(),
     connectionStatus: "Unknown" as ConnectionStatus,
-    challenges: [] as Challenge[],
+    challenges: [] as ChallengeModel[],
   }),
   methods: {
-    acceptChallenge(challenge: Challenge) {
-      challenge.type = "Accepting";
+    acceptChallenge(challenge: ChallengeModel) {
+      challenge.status = ChallengeStatus.Accepting;
       this.connection
         .invoke("AcceptChallenge", challenge.id)
         .catch(function (err) {
@@ -153,8 +132,8 @@ const Challenges = defineComponent({
           console.log("Error accepting challenge: ", err);
         });
     },
-    declineChallenge(challenge: Challenge) {
-      challenge.type = "Declining";
+    declineChallenge(challenge: ChallengeModel) {
+      challenge.status = ChallengeStatus.Declining;
       this.connection
         .invoke("DeclineChallenge", challenge.id)
         .catch(function (err) {
@@ -164,8 +143,8 @@ const Challenges = defineComponent({
     },
   },
   computed: {
-    orderedChallenges(): Challenge[] {
-      const byIdDesc = (c1: Challenge, c2: Challenge) => {
+    orderedChallenges(): ChallengeModel[] {
+      const byIdDesc = (c1: ChallengeModel, c2: ChallengeModel) => {
         if (c1.id < c2.id) {
           return 1;
         } else if (c1.id > c2.id) {

@@ -12,7 +12,7 @@ namespace NotificationPortal.Web.Models
                 CommunityName = challengeEntry.CommunityName,
                 FromPlayer = challengeEntry.FromPlayer,
                 ToPlayer = challengeEntry.ToPlayer,
-                Type = challengeEntry.Status.ToString(),
+                Status = challengeEntry.Status,
                 Date = challengeEntry.Date
             };
         }

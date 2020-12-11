@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from '../runtime';
+import {
+    ChallengeStatus,
+    ChallengeStatusFromJSON,
+    ChallengeStatusFromJSONTyped,
+    ChallengeStatusToJSON,
+} from './';
+
 /**
  * 
  * @export
@@ -45,10 +52,10 @@ export interface ChallengeModel {
     toPlayer: string;
     /**
      * 
-     * @type {string}
+     * @type {ChallengeStatus}
      * @memberof ChallengeModel
      */
-    type: string;
+    status: ChallengeStatus;
     /**
      * 
      * @type {Date}
@@ -71,7 +78,7 @@ export function ChallengeModelFromJSONTyped(json: any, ignoreDiscriminator: bool
         'communityName': json['communityName'],
         'fromPlayer': json['fromPlayer'],
         'toPlayer': json['toPlayer'],
-        'type': json['type'],
+        'status': ChallengeStatusFromJSON(json['status']),
         'date': (new Date(json['date'])),
     };
 }
@@ -89,7 +96,7 @@ export function ChallengeModelToJSON(value?: ChallengeModel | null): any {
         'communityName': value.communityName,
         'fromPlayer': value.fromPlayer,
         'toPlayer': value.toPlayer,
-        'type': value.type,
+        'status': ChallengeStatusToJSON(value.status),
         'date': (value.date.toISOString()),
     };
 }

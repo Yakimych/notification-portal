@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using NotificationPortal.Web.Data;
 // using Swashbuckle.AspNetCore.Annotations;
 
 namespace NotificationPortal.Web.Models
@@ -22,7 +23,7 @@ namespace NotificationPortal.Web.Models
         public string ToPlayer { get; init; }
 
         [Required]
-        public string Type { get; init; }
+        public ChallengeStatus Status { get; init; }
 
         [Required]
         public DateTime Date { get; init; }
