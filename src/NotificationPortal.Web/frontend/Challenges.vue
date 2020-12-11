@@ -37,113 +37,40 @@
 import * as signalR from "@microsoft/signalr";
 import { ChallengeApiApi, ChallengeStatus, Configuration } from "./api";
 import { ChallengeModel } from "./api";
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted, Ref, computed } from "vue";
 import ChallengeRow from "./ChallengeRow.vue";
 
 type ConnectionStatus = "Unknown" | "Connected" | "Disconnected";
 
 const Challenges = defineComponent({
   components: { ChallengeRow },
-  mounted: function () {
-    const challengeApi = new ChallengeApiApi(
-      new Configuration({ basePath: "" })
-    );
-    challengeApi
-      .apiChallengesGet()
-      .then((response) => {
-        console.log("Response data: ", response);
-        this.challenges = response.challenges;
-
-        this.isLoadingChallenges = false;
-      })
-      .catch((e) => {
-        // TODO: GUI for error state
-        console.log("Error loading challenges: ", e);
-        this.isLoadingChallenges = false;
-      });
-
-    this.connection.onreconnecting(() => {
-      this.connectionStatus = "Disconnected";
-    });
-
-    this.connection.onreconnected(() => {
-      this.connectionStatus = "Connected";
-    });
-
-    this.connection.on("ChallengeStatusChanged", (challengeId, newStatus) => {
-      console.log("ChallengeStatusChanged: ", challengeId, newStatus);
-      const challengeToUpdate = this.challenges.find(
-        (c) => c.id === challengeId
-      );
-      if (challengeToUpdate !== undefined) {
-        challengeToUpdate.status = newStatus;
-      }
-    });
-
-    this.connection.on(
-      "NewChallengeIssued",
-      (
-        challengeId: number,
-        communityName: string,
-        fromPlayer: string,
-        toPlayer: string,
-        status: ChallengeStatus,
-        date: string
-      ) => {
-        const challengeToAdd: ChallengeModel = {
-          id: challengeId,
-          communityName,
-          fromPlayer,
-          toPlayer,
-          status,
-          date: new Date(date),
-        };
-
-        this.challenges.push(challengeToAdd);
-      }
-    );
-
-    this.connection
-      .start()
-      .then(() => {
-        this.connectionStatus = "Connected";
-      })
-      .catch(function (err) {
-        return console.error(err.toString());
-      });
-  },
-  data: () => ({
+  setup(props) {
     // TODO: DU for loading states
-    isLoadingChallenges: true,
-    connection: new signalR.HubConnectionBuilder()
+    const isLoadingChallenges: Ref<boolean> = ref(true);
+    const connection = new signalR.HubConnectionBuilder()
       .withAutomaticReconnect()
       .withUrl("/challengehub")
-      .build(),
-    connectionStatus: "Unknown" as ConnectionStatus,
-    challenges: [] as ChallengeModel[],
-  }),
-  methods: {
-    acceptChallenge(challenge: ChallengeModel) {
+      .build();
+    const connectionStatus: Ref<ConnectionStatus> = ref("Unknown");
+    const challenges: Ref<ChallengeModel[]> = ref([]);
+
+    const acceptChallenge = (challenge: ChallengeModel) => {
       challenge.status = ChallengeStatus.Accepting;
-      this.connection
-        .invoke("AcceptChallenge", challenge.id)
-        .catch(function (err) {
-          // TODO: Handle error
-          console.log("Error accepting challenge: ", err);
-        });
-    },
-    declineChallenge(challenge: ChallengeModel) {
+      connection.invoke("AcceptChallenge", challenge.id).catch(function (err) {
+        // TODO: Handle error
+        console.log("Error accepting challenge: ", err);
+      });
+    };
+
+    const declineChallenge = (challenge: ChallengeModel) => {
       challenge.status = ChallengeStatus.Declining;
-      this.connection
-        .invoke("DeclineChallenge", challenge.id)
-        .catch(function (err) {
-          // TODO: Handle error
-          console.log("Error declining challenge: ", err);
-        });
-    },
-  },
-  computed: {
-    orderedChallenges(): ChallengeModel[] {
+      connection.invoke("DeclineChallenge", challenge.id).catch(function (err) {
+        // TODO: Handle error
+        console.log("Error declining challenge: ", err);
+      });
+    };
+
+    const orderedChallenges = computed(() => {
       const byIdDesc = (c1: ChallengeModel, c2: ChallengeModel) => {
         if (c1.id < c2.id) {
           return 1;
@@ -154,10 +81,11 @@ const Challenges = defineComponent({
         }
       };
 
-      return [...this.challenges].sort(byIdDesc);
-    },
-    connectionStatusBarClass() {
-      switch (this.connectionStatus) {
+      return [...challenges.value].sort(byIdDesc);
+    });
+
+    const connectionStatusBarClass = computed(() => {
+      switch (connectionStatus.value) {
         case "Connected":
           return "connected";
         case "Disconnected":
@@ -166,10 +94,91 @@ const Challenges = defineComponent({
         default:
           return "unknown";
       }
-    },
-    canRespondToChallenges(): boolean {
-      return this.connectionStatus === "Connected";
-    },
+    });
+
+    const canRespondToChallenges = computed(() => {
+      return connectionStatus.value === "Connected";
+    });
+
+    onMounted(function () {
+      const challengeApi = new ChallengeApiApi(
+        new Configuration({ basePath: "" })
+      );
+      challengeApi
+        .apiChallengesGet()
+        .then((response) => {
+          console.log("Response data: ", response);
+          challenges.value = response.challenges;
+
+          isLoadingChallenges.value = false;
+        })
+        .catch((e) => {
+          // TODO: GUI for error state
+          console.log("Error loading challenges: ", e);
+          isLoadingChallenges.value = false;
+        });
+
+      connection.onreconnecting(() => {
+        connectionStatus.value = "Disconnected";
+      });
+
+      connection.onreconnected(() => {
+        connectionStatus.value = "Connected";
+      });
+
+      connection.on("ChallengeStatusChanged", (challengeId, newStatus) => {
+        console.log("ChallengeStatusChanged: ", challengeId, newStatus);
+        const challengeToUpdate = challenges.value.find(
+          (c) => c.id === challengeId
+        );
+        if (challengeToUpdate !== undefined) {
+          challengeToUpdate.status = newStatus;
+        }
+      });
+
+      connection.on(
+        "NewChallengeIssued",
+        (
+          challengeId: number,
+          communityName: string,
+          fromPlayer: string,
+          toPlayer: string,
+          status: ChallengeStatus,
+          date: string
+        ) => {
+          const challengeToAdd: ChallengeModel = {
+            id: challengeId,
+            communityName,
+            fromPlayer,
+            toPlayer,
+            status,
+            date: new Date(date),
+          };
+
+          challenges.value.push(challengeToAdd);
+        }
+      );
+
+      connection
+        .start()
+        .then(() => {
+          connectionStatus.value = "Connected";
+        })
+        .catch(function (err) {
+          return console.error(err.toString());
+        });
+    });
+
+    return {
+      isLoadingChallenges,
+      connectionStatus,
+      challenges,
+      acceptChallenge,
+      declineChallenge,
+      orderedChallenges,
+      connectionStatusBarClass,
+      canRespondToChallenges,
+    };
   },
 });
 
