@@ -40,7 +40,7 @@ export default defineComponent({
     isEnabled: { type: Boolean, required: true },
     challenge: { type: Object as PropType<ChallengeModel>, required: true },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const challengeStatusClass = computed(() => {
       switch (props.challenge.status) {
         case "Accepted":
@@ -79,25 +79,27 @@ export default defineComponent({
       return props.challenge.date.toLocaleDateString();
     });
 
+    const emitAccept = () => {
+      if (canRespondToChallenges) {
+        emit("accept-challenge", props.challenge);
+      }
+    };
+
+    const emitDecline = () => {
+      if (canRespondToChallenges) {
+        emit("decline-challenge", props.challenge);
+      }
+    };
+
     return {
       formattedDate,
       challengeStatusClass,
       showSpinner,
       showButtons,
       canRespondToChallenges,
+      emitAccept,
+      emitDecline,
     };
-  },
-  methods: {
-    emitAccept() {
-      if (this.canRespondToChallenges) {
-        this.$emit("accept-challenge", this.challenge);
-      }
-    },
-    emitDecline() {
-      if (this.canRespondToChallenges) {
-        this.$emit("decline-challenge", this.challenge);
-      }
-    },
   },
 });
 </script> 
