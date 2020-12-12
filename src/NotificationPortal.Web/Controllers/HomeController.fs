@@ -22,7 +22,7 @@ type HomeController (logger : ILogger<HomeController>) =
 
     [<ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)>]
     member this.Error () =
-        let reqId = 
+        let reqId =
             if isNull Activity.Current then
                 this.HttpContext.TraceIdentifier
             else

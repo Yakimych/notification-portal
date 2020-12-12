@@ -1,12 +1,14 @@
-﻿@model NotificationsViewModel
+﻿@model NotificationPortal.Web.Controllers.NotificationsViewModel
 
 @{
     ViewData["Title"] = "Notifications Page";
 
     string WithRawTopic(string encodedTopic)
     {
-        var rawTopic = encodedTopic.Base64UrlDecode();
-        return $"{encodedTopic} ({rawTopic})";
+        // TODO: Move implementation
+        return "TODO";
+        // var rawTopic = encodedTopic.Base64UrlDecode();
+        // return $"{encodedTopic} ({rawTopic})";
     }
 }
 
