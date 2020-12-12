@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace NotificationPortal.Web.Data.Migrations
+namespace NotificationPortal.Data.Migrations
 {
     public partial class NotificationsAndChallenges : Migration
     {

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 
-namespace NotificationPortal.Web
+namespace NotificationPortal.Data
 {
     public static class DbInitializer
     {

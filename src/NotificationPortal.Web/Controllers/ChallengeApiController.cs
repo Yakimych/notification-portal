@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NotificationPortal.Web.Core;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.Controllers

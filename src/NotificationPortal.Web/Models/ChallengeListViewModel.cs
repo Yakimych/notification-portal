@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 // using Swashbuckle.AspNetCore.Annotations;
 
 namespace NotificationPortal.Web.Models

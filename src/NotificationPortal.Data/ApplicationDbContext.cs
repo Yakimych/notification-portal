@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace NotificationPortal.Web.Data
+namespace NotificationPortal.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

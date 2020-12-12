@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using NotificationPortal.Web.Core;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 
 namespace NotificationPortal.Web.Hubs
 {

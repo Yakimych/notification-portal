@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using NotificationPortal.Web.Data;
 
-namespace NotificationPortal.Web.Data.Migrations
+namespace NotificationPortal.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20201019215034_NotificationsAndChallenges")]

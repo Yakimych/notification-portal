@@ -5,7 +5,7 @@ using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Configuration;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 
 namespace NotificationPortal.Web.Core
 {

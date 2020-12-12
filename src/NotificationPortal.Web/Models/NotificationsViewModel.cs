@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 
 namespace NotificationPortal.Web.Models
 {

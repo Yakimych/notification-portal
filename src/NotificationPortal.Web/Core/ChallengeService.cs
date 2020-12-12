@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Hangfire;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using NotificationPortal.Web.Data;
+using NotificationPortal.Data;
 using NotificationPortal.Web.Hubs;
 using NotificationPortal.Web.Models;
 
@@ -83,13 +83,13 @@ namespace NotificationPortal.Web.Core
             // Update Challenge status and timestamp
             var challengeToSave =
                 challenge with
-                    {
-                        Date = DateTime.UtcNow,
-                        Status =
+                {
+                    Date = DateTime.UtcNow,
+                    Status =
                         response == NotificationType.Accepted
                             ? ChallengeStatus.Accepted
                             : ChallengeStatus.Declined
-                    };
+                };
             _dbContext.ChallengeEntries.Update(challengeToSave);
 
             // Save new Notification
