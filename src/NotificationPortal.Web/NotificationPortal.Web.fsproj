@@ -26,4 +26,9 @@
     <ProjectReference Include="..\NotificationPortal.Data\NotificationPortal.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml" />
+  </ItemGroup>
+
 </Project>

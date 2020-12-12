@@ -1,0 +1,33 @@
+﻿@model SendChallengeModel
+
+@{
+    ViewData["Title"] = "Challenge Test Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Test send challenge</h1>
+    @if (!string.IsNullOrWhiteSpace(Model.RequestStatusMessage)) {
+        <div class="alert alert-primary" role="alert">@Model.RequestStatusMessage</div>
+    }
+    <div>
+        <form method="POST" asp-controller="Challenge" asp-action="SendChallenge">
+            <div>
+                @Html.LabelFor(model => model.CommunityName)
+                @Html.TextBoxFor(model => model.CommunityName)
+                @Html.ValidationMessageFor(model => model.CommunityName)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.FromPlayer)
+                @Html.TextBoxFor(model => model.FromPlayer)
+                @Html.ValidationMessageFor(model => model.FromPlayer)
+            </div>
+            <div>
+                @Html.LabelFor(model => model.ToPlayer)
+                @Html.TextBoxFor(model => model.ToPlayer)
+                @Html.ValidationMessageFor(model => model.ToPlayer)
+            </div>
+
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</div>

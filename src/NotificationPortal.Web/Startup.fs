@@ -37,9 +37,19 @@ type Startup private () =
 
     // This method gets called by the runtime. Use this method to add services to the container.
     member this.ConfigureServices(services: IServiceCollection) =
-        // Add framework services.
-        services.AddControllersWithViews().AddRazorRuntimeCompilation() |> ignore
-        services.AddRazorPages() |> ignore
+        services.AddDbContext<ApplicationDbContext>(fun options ->
+            options.UseSqlite(this.Configuration.GetConnectionString("DefaultConnection")) |> ignore
+        ) |> ignore
+
+        services.AddDefaultIdentity<IdentityUser>(fun options -> options.SignIn.RequireConfirmedAccount <- true)
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+        |> ignore
+
+        services
+            .AddControllersWithViews()
+            .AddJsonOptions(fun options -> options.JsonSerializerOptions.Converters.Add(JsonStringEnumConverter()))
+            .AddRazorRuntimeCompilation() |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
@@ -56,6 +66,7 @@ type Startup private () =
 
         app.UseRouting() |> ignore
 
+        app.UseAuthentication() |> ignore
         app.UseAuthorization() |> ignore
 
         app.UseEndpoints(fun endpoints ->
