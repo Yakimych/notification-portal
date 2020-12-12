@@ -15,6 +15,7 @@ $OUTPUT_FOLDER = "./publish_output"
 rm -rf $OUTPUT_FOLDER
 
 Set-Location $PROJECT_DIR
+dotnet build $PROJECT_FILE -c release
 npm install
 npm run release
 Set-Location ../../infrastructure
