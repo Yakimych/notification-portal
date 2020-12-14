@@ -11,6 +11,7 @@
     <Compile Include="Controllers\ChallengeController.fs" />
     <Compile Include="Controllers\NotificationsController.fs" />
     <Compile Include="Controllers\ChallengeApiController.fs" />
+    <Compile Include="ChallengeHub.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -90,7 +90,7 @@ type Startup private () =
                 pattern = "{controller=Home}/{action=Index}/{id?}") |> ignore
             endpoints.MapRazorPages() |> ignore
 
-//            endpoints.MapHub<ChallengeHub>("/challengehub");
+            endpoints.MapHub<ChallengeHub>("/challengehub") |> ignore
         ) |> ignore
 
     member val Configuration : IConfiguration = null with get, set
