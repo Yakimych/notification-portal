@@ -12,6 +12,7 @@
     <Compile Include="Controllers\NotificationsController.fs" />
     <Compile Include="Controllers\ChallengeApiController.fs" />
     <Compile Include="ChallengeHub.fs" />
+    <Compile Include="Actors.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -25,6 +26,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.0" />
     <PackageReference Include="FirebaseAdmin" Version="1.17.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Akka.FSharp" Version="1.4.12" />
   </ItemGroup>
 
   <ItemGroup>

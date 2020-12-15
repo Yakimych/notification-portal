@@ -16,6 +16,9 @@ open NotificationPortal.Data
 open Microsoft.OpenApi.Models
 open System.Text.Json.Serialization
 
+open Akka.FSharp
+open Akka.Actor
+
 type HangfireAuthorizationFilter() =
     interface IDashboardAuthorizationFilter with
         member this.Authorize (context: DashboardContext) =
@@ -58,6 +61,10 @@ type Startup private () =
         services.AddHangfireServer() |> ignore
 //        services.AddScoped<IFirebaseMessagingService>()
 //        services.AddScoped<ChallengeService>()
+
+        let publisher = Actors.setup()
+        // TODO: Wrap into a "service"
+        services.AddSingleton<IActorRef>(fun _ -> publisher) |> ignore
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     member this.Configure(app: IApplicationBuilder, env: IWebHostEnvironment) =
