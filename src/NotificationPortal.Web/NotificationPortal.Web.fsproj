@@ -13,6 +13,7 @@
     <Compile Include="Controllers\ChallengeApiController.fs" />
     <Compile Include="ChallengeHub.fs" />
     <Compile Include="Actors.fs" />
+    <Compile Include="ActorsCallingActors.fs" />
     <Compile Include="Startup.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
