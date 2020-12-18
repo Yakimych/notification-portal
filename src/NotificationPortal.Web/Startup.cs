@@ -53,8 +53,13 @@ namespace NotificationPortal.Web
             services.AddScoped<FirebaseMessagingService>();
             services.AddScoped<ChallengeService>();
 
-            var relogifyActorModel = RelogifyActorSystem.CreateModel();
-            services.AddSingleton(relogifyActorModel);
+            services.AddSingleton(provider =>
+            {
+                var serviceScopeFactory = provider.GetService<IServiceScopeFactory>();
+                var relogifyActorModel = RelogifyActorSystem.CreateModel(serviceScopeFactory);
+
+                return relogifyActorModel;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
