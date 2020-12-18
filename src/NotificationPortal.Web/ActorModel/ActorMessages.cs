@@ -15,8 +15,8 @@ namespace NotificationPortal.Web.ActorModel
 
     public record FirebaseNotificationSentMessage
     {
-        public int ChallengeEntryId { get; init; }
-        public string FirebaseResponse { get; init; }
+        public ChallengeEntry ChallengeEntry { get; init; }
+        public ChallengeNotification ChallengeNotification { get; init; }
     }
 
     public record ChallengeStatusUpdatedMessage

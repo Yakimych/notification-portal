@@ -2,35 +2,43 @@ using System;
 using System.Threading.Tasks;
 using Akka.Actor;
 using NotificationPortal.Data;
+using Microsoft.Extensions.DependencyInjection;
+using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.ActorModel
 {
     public class ChallengeCreationActor : ReceiveActor
     {
-        private async Task<ChallengeEntry> FakeSaveToDb()
+        private async Task<ChallengeEntry> SaveToDb(
+            SendChallengeModel sendChallengeModel, ApplicationDbContext dbContext)
         {
-            await Task.Delay(1000);
-            return new ChallengeEntry
+            var newChallenge = new ChallengeEntry
             {
-                Id = 1,
-                CommunityName = "com",
-                FromPlayer = "p1",
-                ToPlayer = "p2",
+                CommunityName = sendChallengeModel.CommunityName,
+                FromPlayer = sendChallengeModel.FromPlayer,
+                ToPlayer = sendChallengeModel.ToPlayer,
                 Status = ChallengeStatus.Challenging,
                 Date = DateTime.UtcNow
             };
+
+            await dbContext.ChallengeEntries.AddAsync(newChallenge);
+            await dbContext.SaveChangesAsync();
+
+            return newChallenge;
         }
 
         public ChallengeCreationActor()
         {
             Receive<ChallengeIssuedMessage>(message =>
             {
-                Console.WriteLine($"{nameof(ChallengeCreationActor)}: received message: {message}");
-                Console.WriteLine($"Adding challenge to the database");
+                using var serviceScope = Context.CreateScope();
+                using var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
 
                 var eventStream = Context.System.EventStream;
-                FakeSaveToDb().ContinueWith(saveChallengeTask => eventStream.Publish(new ChallengeEntrySavedMessage
-                    { ChallengeEntry = saveChallengeTask.Result }));
+                SaveToDb(message.SendChallengeModel, dbContext)
+                    .ContinueWith(saveChallengeTask =>
+                        eventStream.Publish(
+                            new ChallengeEntrySavedMessage { ChallengeEntry = saveChallengeTask.Result }));
             });
         }
     }
