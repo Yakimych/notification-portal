@@ -13,6 +13,7 @@ using NotificationPortal.Web.Core;
 using NotificationPortal.Web.Hubs;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using NotificationPortal.Web.ActorModel;
 
 namespace NotificationPortal.Web
 {
@@ -51,6 +52,9 @@ namespace NotificationPortal.Web
 
             services.AddScoped<FirebaseMessagingService>();
             services.AddScoped<ChallengeService>();
+
+            var relogifyActorModel = RelogifyActorSystem.CreateModel();
+            services.AddSingleton(relogifyActorModel);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

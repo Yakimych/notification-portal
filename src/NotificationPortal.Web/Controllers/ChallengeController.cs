@@ -1,23 +1,16 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using NotificationPortal.Web.Core;
-using NotificationPortal.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using NotificationPortal.Web.ActorModel;
 using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.Controllers
 {
     public class ChallengeController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly ChallengeService _challengeService;
+        private readonly RelogifyActorModel _actorModel;
 
-        public ChallengeController(
-            ApplicationDbContext dbContext,
-            ChallengeService challengeService)
+        public ChallengeController(RelogifyActorModel actorModel)
         {
-            _dbContext = dbContext;
-            _challengeService = challengeService;
+            _actorModel = actorModel;
         }
 
         [HttpGet]
@@ -34,20 +27,14 @@ namespace NotificationPortal.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendChallenge(SendChallengeModel model)
+        public IActionResult SendChallenge(SendChallengeModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            try
-            {
-                await _challengeService.CreateChallengeSendNotificationAndSaveEverythingToTheDatabase(model);
-                return View(model with { RequestStatusMessage = "Challenge queued for sending" });
-            }
-            catch (Exception ex)
-            {
-                return View(model with { RequestStatusMessage = $"Error: {ex.Message}" }); // TODO: Log exception instead
-            }
+            _actorModel.ActorSystem.EventStream.Publish(new ChallengeIssuedMessage { SendChallengeModel = model });
+
+            return View(model with { RequestStatusMessage = "Challenge queued for sending" });
         }
     }
 }
