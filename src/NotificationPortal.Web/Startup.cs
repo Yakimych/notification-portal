@@ -60,6 +60,9 @@ namespace NotificationPortal.Web
 
                 return relogifyActorModel;
             });
+
+            services.AddScoped<NotificationPersistence>();
+            services.AddScoped<ChallengePersistence>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
