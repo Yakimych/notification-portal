@@ -94,7 +94,7 @@ namespace NotificationPortal.Web
             {
                 Topic = encodedTopic,
                 Message = notificationMessage,
-                FromPlayer = challenge.FromPlayer,
+                FromPlayer = respondingPlayer,
                 Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
                 Type = response,
                 FirebaseResponse = firebaseResponse
