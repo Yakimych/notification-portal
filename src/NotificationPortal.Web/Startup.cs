@@ -51,18 +51,6 @@ namespace NotificationPortal.Web
             );
             services.AddHangfireServer();
 
-            services.AddScoped<ChallengeService>();
-
-            services.AddSingleton(provider =>
-            {
-                var serviceScopeFactory = provider.GetService<IServiceScopeFactory>();
-                var relogifyActorModel = RelogifyActorSystem.CreateModel(serviceScopeFactory);
-
-                return relogifyActorModel;
-            });
-
-            services.AddScoped<NotificationPersistence>();
-            services.AddScoped<ChallengePersistence>();
             services.AddSingleton(provider =>
             {
                 var configuration = provider.GetService<IConfiguration>();
@@ -74,6 +62,17 @@ namespace NotificationPortal.Web
 
                 return new FirebaseMessagingService(firebaseConfigurationJsonString);
             });
+
+            services.AddSingleton(provider =>
+            {
+                var serviceScopeFactory = provider.GetService<IServiceScopeFactory>();
+                var relogifyActorModel = RelogifyActorSystem.CreateModel(serviceScopeFactory);
+
+                return relogifyActorModel;
+            });
+
+            services.AddScoped<NotificationPersistence>();
+            services.AddScoped<ChallengePersistence>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

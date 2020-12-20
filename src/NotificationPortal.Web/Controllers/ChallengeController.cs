@@ -32,7 +32,7 @@ namespace NotificationPortal.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            _actorModel.ActorSystem.EventStream.Publish(new ChallengeIssuedMessage { SendChallengeModel = model });
+            _actorModel.PublishMessage(new ChallengeIssuedMessage { SendChallengeModel = model });
 
             return View(model with { RequestStatusMessage = "Challenge queued for sending" });
         }

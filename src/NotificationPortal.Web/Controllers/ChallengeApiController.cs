@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NotificationPortal.Web.Core;
 using NotificationPortal.Data;
+using NotificationPortal.Web.ActorModel;
 using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.Controllers
@@ -13,14 +13,15 @@ namespace NotificationPortal.Web.Controllers
     [ApiController]
     public class ChallengeApiController : ControllerBase
     {
-        private readonly ChallengeService _challengeService;
-        // TOOD: Do not use dbContext directly in controllers
+        private readonly RelogifyActorModel _relogifyActorModel;
+
+        // TODO: Do not use dbContext directly in controllers
         private readonly ApplicationDbContext _dbContext;
 
-        public ChallengeApiController(ChallengeService challengeService, ApplicationDbContext dbContext)
+        public ChallengeApiController(ApplicationDbContext dbContext, RelogifyActorModel relogifyActorModel)
         {
-            _challengeService = challengeService;
             _dbContext = dbContext;
+            _relogifyActorModel = relogifyActorModel;
         }
 
         [HttpGet]
@@ -43,13 +44,16 @@ namespace NotificationPortal.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateChallenge(SendChallengeModel model)
+        public IActionResult CreateChallenge(SendChallengeModel model)
         {
             try
             {
-                var createdChallenge =
-                    await _challengeService.CreateChallengeSendNotificationAndSaveEverythingToTheDatabase(model);
-                return Ok(createdChallenge);
+                _relogifyActorModel.PublishMessage(new ChallengeIssuedMessage { SendChallengeModel = model });
+
+                // TODO: Return createdChallenge
+                // return Created(createdChallenge);
+
+                return Ok();
             }
             catch (Exception ex)
             {
@@ -59,21 +63,23 @@ namespace NotificationPortal.Web.Controllers
         }
 
         [HttpPost("rpc/accept/{id}")]
-        public async Task<IActionResult> AcceptChallenge(int id)
+        public IActionResult AcceptChallenge(int id)
         {
-            var result = await _challengeService.AcceptChallenge(id);
-            if (result == OperationResult.NotFound)
-                return NotFound();
+            _relogifyActorModel.PublishMessage(new ChallengeAcceptedMessage { ChallengeEntryId = id });
+            // TODO: Handle NotFound
+            // if (result == OperationResult.NotFound)
+            //     return NotFound();
 
             return NoContent();
         }
 
         [HttpPost("rpc/decline/{id}")]
-        public async Task<IActionResult> DeclineChallenge(int id)
+        public IActionResult DeclineChallenge(int id)
         {
-            var result = await _challengeService.DeclineChallenge(id);
-            if (result == OperationResult.NotFound)
-                return NotFound();
+            _relogifyActorModel.PublishMessage(new ChallengeDeclinedMessage { ChallengeEntryId = id });
+            // TODO: Handle NotFound
+            // if (result == OperationResult.NotFound)
+            //     return NotFound();
 
             return NoContent();
         }

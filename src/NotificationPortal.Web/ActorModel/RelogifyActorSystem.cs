@@ -5,8 +5,11 @@ namespace NotificationPortal.Web.ActorModel
 {
     public record RelogifyActorModel
     {
-        public ActorSystem ActorSystem { get; init; }
+        public ActorSystem ActorSystem { private get; init; }
         public IActorRef ChallengeCreationActor { get; init; }
+
+        public void PublishMessage(object message) =>
+            ActorSystem.EventStream.Publish(message);
     }
 
     public static class RelogifyActorSystem
