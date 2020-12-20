@@ -1,27 +1,25 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using NotificationPortal.Web.Core;
-using NotificationPortal.Data;
+using NotificationPortal.Web.ActorModel;
 
 namespace NotificationPortal.Web.Hubs
 {
     public class ChallengeHub : Hub
     {
-        private readonly ApplicationDbContext _dbContext;
-        private readonly ChallengeService _challengeService;
+        private readonly RelogifyActorModel _relogifyActorModel;
 
         // TODO: Can this be triggered via the strongly typed IHubContext?
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/hubcontext?view=aspnetcore-3.1#inject-a-strongly-typed-hubcontext
-        public ChallengeHub(ApplicationDbContext dbContext, ChallengeService challengeService)
+        public ChallengeHub(RelogifyActorModel relogifyActorModel)
         {
-            _dbContext = dbContext;
-            _challengeService = challengeService;
+            _relogifyActorModel = relogifyActorModel;
         }
 
-        public Task AcceptChallenge(int challengeId) =>
-            _challengeService.AcceptChallenge(challengeId);
+        public void AcceptChallenge(int challengeId) =>
+            _relogifyActorModel.ActorSystem.EventStream.Publish(new ChallengeAcceptedMessage
+                { ChallengeEntryId = challengeId });
 
-        public Task DeclineChallenge(int challengeId) =>
-            _challengeService.DeclineChallenge(challengeId);
+        public void DeclineChallenge(int challengeId) =>
+            _relogifyActorModel.ActorSystem.EventStream.Publish(new ChallengeDeclinedMessage
+                { ChallengeEntryId = challengeId });
     }
 }

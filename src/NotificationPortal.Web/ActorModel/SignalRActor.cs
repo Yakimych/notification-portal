@@ -29,7 +29,7 @@ namespace NotificationPortal.Web.ActorModel
                 var challengeHubContext = serviceScope.ServiceProvider.GetService<IHubContext<ChallengeHub>>();
                 challengeHubContext?.Clients.All.SendAsync(
                     "ChallengeStatusChanged",
-                    message.ChallengeEntryId,
+                    message.ChallengeEntry.Id,
                     message.NewStatus.ToString());
             });
         }

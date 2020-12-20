@@ -16,15 +16,21 @@ namespace NotificationPortal.Web.ActorModel
             await dbContext.SaveChangesAsync();
         }
 
+        private void SaveNotification(int challengeEntryId, ChallengeNotification challengeNotification)
+        {
+            using var serviceScope = Context.CreateScope();
+            using var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+
+            _ = SaveToDb(challengeEntryId, challengeNotification, dbContext);
+        }
+
         public NotificationCreationActor()
         {
             Receive<FirebaseNotificationSentMessage>(message =>
-            {
-                using var serviceScope = Context.CreateScope();
-                using var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
+                SaveNotification(message.ChallengeEntry.Id, message.ChallengeNotification));
 
-                _ = SaveToDb(message.ChallengeEntry.Id, message.ChallengeNotification, dbContext);
-            });
+            Receive<FirebaseResponseNotificationSentMessage>(message =>
+                SaveNotification(message.ChallengeEntry.Id, message.ChallengeNotification));
         }
     }
 }
