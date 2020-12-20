@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace NotificationPortal.Data
 {
@@ -17,6 +19,21 @@ namespace NotificationPortal.Data
             await _dbContext.SaveChangesAsync();
 
             return challengeEntry;
+        }
+
+        public async Task<ChallengeEntry> UpdateStatusInDb(
+            int challengeEntryId, ChallengeStatus newStatus, DateTime timestamp)
+        {
+            var challengeBeforeUpdate = await _dbContext.ChallengeEntries.FindAsync(challengeEntryId);
+            // if (challengeToUpdate == null)
+            // TODO: return OperationResult.NotFound;
+            _dbContext.Entry(challengeBeforeUpdate).State = EntityState.Detached;
+
+            var updatedChallenge = challengeBeforeUpdate with { Date = timestamp, Status = newStatus };
+            _dbContext.ChallengeEntries.Update(updatedChallenge);
+            await _dbContext.SaveChangesAsync();
+
+            return updatedChallenge;
         }
     }
 }
