@@ -8,24 +8,13 @@ namespace NotificationPortal.Web.ActorModel
     {
         private IServiceScopeFactory _serviceScopeFactory;
 
-        public void Initialize(IServiceScopeFactory serviceScopeFactory)
-        {
-            _serviceScopeFactory = serviceScopeFactory;
-        }
-
-        public IServiceScope CreateScope()
-        {
-            return _serviceScopeFactory.CreateScope();
-        }
+        public void Initialize(IServiceScopeFactory serviceScopeFactory) => _serviceScopeFactory = serviceScopeFactory;
+        public IServiceScope CreateScope() => _serviceScopeFactory.CreateScope();
     }
 
     public class ServiceScopeExtensionIdProvider : ExtensionIdProvider<ServiceScopeExtension>
     {
-        public override ServiceScopeExtension CreateExtension(ExtendedActorSystem system)
-        {
-            return new();
-        }
-
+        public override ServiceScopeExtension CreateExtension(ExtendedActorSystem system) => new();
         public static readonly ServiceScopeExtensionIdProvider Instance = new();
     }
 
@@ -37,9 +26,7 @@ namespace NotificationPortal.Web.ActorModel
             ServiceScopeExtensionIdProvider.Instance.Get(system).Initialize(serviceScopeFactory);
         }
 
-        public static IServiceScope CreateScope(this IActorContext context)
-        {
-            return ServiceScopeExtensionIdProvider.Instance.Get(context.System).CreateScope();
-        }
+        public static IServiceScope CreateScope(this IActorContext context) =>
+            ServiceScopeExtensionIdProvider.Instance.Get(context.System).CreateScope();
     }
 }

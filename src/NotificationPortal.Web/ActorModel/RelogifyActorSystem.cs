@@ -8,8 +8,7 @@ namespace NotificationPortal.Web.ActorModel
         public ActorSystem ActorSystem { private get; init; }
         public IActorRef ChallengeCreationActor { get; init; }
 
-        public void PublishMessage(object message) =>
-            ActorSystem.EventStream.Publish(message);
+        public void PublishMessage(object message) => ActorSystem.EventStream.Publish(message);
     }
 
     public static class RelogifyActorSystem
@@ -32,13 +31,16 @@ namespace NotificationPortal.Web.ActorModel
 
             var challengeUpdateActor = system.ActorOf<ChallengeUpdateActor>("challenge-update-actor");
             system.EventStream.Subscribe(challengeUpdateActor, typeof(FirebaseInitialChallengeNotificationSentMessage));
-            system.EventStream.Subscribe(challengeUpdateActor, typeof(FirebaseChallengeResponseNotificationSentMessage));
+            system.EventStream.Subscribe(challengeUpdateActor,
+                typeof(FirebaseChallengeResponseNotificationSentMessage));
             system.EventStream.Subscribe(challengeUpdateActor, typeof(ChallengeAcceptedMessage));
             system.EventStream.Subscribe(challengeUpdateActor, typeof(ChallengeDeclinedMessage));
 
             var notificationCreationActor = system.ActorOf<NotificationCreationActor>("notification-creation-actor");
-            system.EventStream.Subscribe(notificationCreationActor, typeof(FirebaseInitialChallengeNotificationSentMessage));
-            system.EventStream.Subscribe(notificationCreationActor, typeof(FirebaseChallengeResponseNotificationSentMessage));
+            system.EventStream.Subscribe(notificationCreationActor,
+                typeof(FirebaseInitialChallengeNotificationSentMessage));
+            system.EventStream.Subscribe(notificationCreationActor,
+                typeof(FirebaseChallengeResponseNotificationSentMessage));
 
             return new RelogifyActorModel { ActorSystem = system, ChallengeCreationActor = challengeCreationActor };
         }

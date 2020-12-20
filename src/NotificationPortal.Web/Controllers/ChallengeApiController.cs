@@ -49,10 +49,6 @@ namespace NotificationPortal.Web.Controllers
             try
             {
                 _relogifyActorModel.PublishMessage(new ChallengeIssuedMessage { SendChallengeModel = model });
-
-                // TODO: Return createdChallenge
-                // return Created(createdChallenge);
-
                 return Ok();
             }
             catch (Exception ex)
@@ -66,10 +62,6 @@ namespace NotificationPortal.Web.Controllers
         public IActionResult AcceptChallenge(int id)
         {
             _relogifyActorModel.PublishMessage(new ChallengeAcceptedMessage { ChallengeEntryId = id });
-            // TODO: Handle NotFound
-            // if (result == OperationResult.NotFound)
-            //     return NotFound();
-
             return NoContent();
         }
 
@@ -77,10 +69,6 @@ namespace NotificationPortal.Web.Controllers
         public IActionResult DeclineChallenge(int id)
         {
             _relogifyActorModel.PublishMessage(new ChallengeDeclinedMessage { ChallengeEntryId = id });
-            // TODO: Handle NotFound
-            // if (result == OperationResult.NotFound)
-            //     return NotFound();
-
             return NoContent();
         }
     }

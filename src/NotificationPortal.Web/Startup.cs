@@ -65,9 +65,7 @@ namespace NotificationPortal.Web
             services.AddSingleton(provider =>
             {
                 var serviceScopeFactory = provider.GetService<IServiceScopeFactory>();
-                var relogifyActorModel = RelogifyActorSystem.CreateModel(serviceScopeFactory);
-
-                return relogifyActorModel;
+                return RelogifyActorSystem.CreateModel(serviceScopeFactory);
             });
 
             services.AddScoped<NotificationPersistence>();
