@@ -10,7 +10,6 @@ using NotificationPortal.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NotificationPortal.Web.Core;
 using NotificationPortal.Web.Hubs;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;

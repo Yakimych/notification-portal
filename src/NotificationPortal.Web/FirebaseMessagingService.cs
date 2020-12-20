@@ -6,7 +6,7 @@ using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using NotificationPortal.Data;
 
-namespace NotificationPortal.Web.Core
+namespace NotificationPortal.Web
 {
     public class FirebaseMessagingService
     {

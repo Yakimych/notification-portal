@@ -1,6 +1,5 @@
 using Akka.Actor;
 using NotificationPortal.Data;
-using NotificationPortal.Web.Core;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace NotificationPortal.Web.ActorModel
