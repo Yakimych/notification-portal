@@ -1,3 +1,4 @@
+using System;
 using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.Storage.SQLite;
@@ -50,7 +51,6 @@ namespace NotificationPortal.Web
             );
             services.AddHangfireServer();
 
-            services.AddScoped<FirebaseMessagingService>();
             services.AddScoped<ChallengeService>();
 
             services.AddSingleton(provider =>
@@ -63,6 +63,17 @@ namespace NotificationPortal.Web
 
             services.AddScoped<NotificationPersistence>();
             services.AddScoped<ChallengePersistence>();
+            services.AddSingleton(provider =>
+            {
+                var configuration = provider.GetService<IConfiguration>();
+                const string FirebaseJsonConfigurationKey = "firebase_json";
+                var firebaseConfigurationJsonString = configuration?[FirebaseJsonConfigurationKey];
+
+                if (firebaseConfigurationJsonString is null)
+                    throw new Exception($"Firebase configuration key: '{FirebaseJsonConfigurationKey}' is missing");
+
+                return new FirebaseMessagingService(firebaseConfigurationJsonString);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,21 +4,26 @@ using System.Threading.Tasks;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
-using Microsoft.Extensions.Configuration;
 using NotificationPortal.Data;
 
 namespace NotificationPortal.Web.Core
 {
     public class FirebaseMessagingService
     {
-        private readonly IConfiguration _configuration;
-
-        public FirebaseMessagingService(IConfiguration configuration)
+        public FirebaseMessagingService(string firebaseConfigurationJsonString)
         {
-            _configuration = configuration;
+            if (string.IsNullOrEmpty(firebaseConfigurationJsonString))
+                throw new Exception(
+                    $"Cannot instantiate {nameof(FirebaseMessagingService)}: Firebase configuration cannot be empty");
+
+            if (FirebaseApp.DefaultInstance == null)
+            {
+                FirebaseApp.Create(new AppOptions
+                    { Credential = GoogleCredential.FromJson(firebaseConfigurationJsonString) });
+            }
         }
 
-        public async Task<ChallengeNotification> SendMessage(ChallengeEntry challenge)
+        public async Task<ChallengeNotification> SendMessageWithInitialChallenge(ChallengeEntry challenge)
         {
             var encodedTopic = $"{challenge.CommunityName}_{challenge.ToPlayer}".Base64UrlEncode();
             var notificationMessage = $"{challenge.CommunityName}: {challenge.FromPlayer} has challenged you to a game!";
@@ -43,36 +48,20 @@ namespace NotificationPortal.Web.Core
                 Topic = encodedTopic
             };
 
-            var challengeNotification = new ChallengeNotification
+            var firebaseResponse = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+
+            return new ChallengeNotification
             {
                 Topic = encodedTopic,
                 Message = notificationMessage,
                 FromPlayer = challenge.FromPlayer,
-                Date = DateTime.UtcNow,
-                Type = NotificationType.Challenged // TODO: take in type as method parameter?
+                Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
+                Type = NotificationType.Challenged,
+                FirebaseResponse = firebaseResponse
             };
-
-            var notificationJsonString = _configuration["firebase_json"];
-            if (string.IsNullOrEmpty(notificationJsonString))
-            {
-                return challengeNotification with { FirebaseResponse = "Mock response - Firebase configuration missing" };
-            }
-
-            if (FirebaseApp.DefaultInstance == null)
-            {
-                FirebaseApp.Create(new AppOptions
-                {
-                    Credential = GoogleCredential.FromJson(notificationJsonString)
-                });
-            }
-
-            var messageResult = await FirebaseMessaging.DefaultInstance.SendAsync(message);
-
-            // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
-            return challengeNotification with { FirebaseResponse = messageResult };
         }
 
-        public async Task<ChallengeNotification> SendMessageResponseToChallenge(
+        public async Task<ChallengeNotification> SendMessageWithResponseToChallenge(
             ChallengeEntry challenge, NotificationType response)
         {
             var responseString = response.ToString().ToLower();
@@ -99,32 +88,17 @@ namespace NotificationPortal.Web.Core
                 Topic = encodedTopic
             };
 
-            var challengeNotificaton = new ChallengeNotification
+            var firebaseResponse = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+
+            return new ChallengeNotification
             {
                 Topic = encodedTopic,
                 Message = notificationMessage,
                 FromPlayer = challenge.FromPlayer,
-                Date = DateTime.UtcNow,
-                Type = NotificationType.Challenged // TODO: take in type as method parameter?
+                Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
+                Type = response,
+                FirebaseResponse = firebaseResponse
             };
-
-            var notificationJsonString = _configuration["firebase_json"];
-            if (string.IsNullOrEmpty(notificationJsonString))
-            {
-                return challengeNotificaton with { FirebaseResponse = "Mock response - Firebase configuration missing" };
-            }
-            if (FirebaseApp.DefaultInstance == null)
-            {
-                FirebaseApp.Create(new AppOptions
-                {
-                    Credential = GoogleCredential.FromJson(notificationJsonString)
-                });
-            }
-
-            var messageResult = await FirebaseMessaging.DefaultInstance.SendAsync(message);
-
-            // TODO: Returning a partial entry - is there a better way? Slimmed down Notification type?
-            return challengeNotificaton with { FirebaseResponse = messageResult };
         }
     }
 }

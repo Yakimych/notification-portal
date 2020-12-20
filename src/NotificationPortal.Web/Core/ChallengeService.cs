@@ -59,7 +59,7 @@ namespace NotificationPortal.Web.Core
         {
             // TODO: Is it possible to handle errors here? Test with spaces in player names and try/catch
             var challengeNotification =
-                await _firebaseMessagingService.SendMessage(challenge);
+                await _firebaseMessagingService.SendMessageWithInitialChallenge(challenge);
 
             // Update Challenge status and timestamp
             var challengeToSave = challenge with { Date = DateTime.UtcNow, Status = ChallengeStatus.Challenged };
@@ -78,7 +78,7 @@ namespace NotificationPortal.Web.Core
         {
             // TODO: Is it possible to handle errors here? Test with spaces in player names and try/catch
             var challengeNotification =
-                await _firebaseMessagingService.SendMessageResponseToChallenge(challenge, response);
+                await _firebaseMessagingService.SendMessageWithResponseToChallenge(challenge, response);
 
             // Update Challenge status and timestamp
             var challengeToSave =
