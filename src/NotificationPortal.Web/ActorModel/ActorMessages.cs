@@ -23,15 +23,14 @@ namespace NotificationPortal.Web.ActorModel
         public ChallengeEntry ChallengeEntry { get; init; }
     }
 
-    public record FirebaseNotificationSentMessage
+    public record FirebaseInitialChallengeNotificationSentMessage
     {
         public ChallengeEntry ChallengeEntry { get; init; }
         public ChallengeNotification ChallengeNotification { get; init; }
     }
 
-    public record FirebaseResponseNotificationSentMessage
+    public record FirebaseChallengeResponseNotificationSentMessage
     {
-        // TODO: Is it enough to use the Id here?
         public ChallengeEntry ChallengeEntry { get; init; }
         public ChallengeNotification ChallengeNotification { get; init; }
     }

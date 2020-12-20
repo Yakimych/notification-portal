@@ -13,6 +13,8 @@ namespace NotificationPortal.Web.ActorModel
             {
                 using var serviceScope = Context.CreateScope();
                 var challengeHubContext = serviceScope.ServiceProvider.GetService<IHubContext<ChallengeHub>>();
+
+                // TODO: Throw if challengeHubContext is not registered
                 challengeHubContext?.Clients.All.SendAsync(
                     "NewChallengeIssued",
                     message.ChallengeEntry.Id,
@@ -27,6 +29,8 @@ namespace NotificationPortal.Web.ActorModel
             {
                 using var serviceScope = Context.CreateScope();
                 var challengeHubContext = serviceScope.ServiceProvider.GetService<IHubContext<ChallengeHub>>();
+
+                // TODO: Throw if challengeHubContext is not registered
                 challengeHubContext?.Clients.All.SendAsync(
                     "ChallengeStatusChanged",
                     message.ChallengeEntry.Id,

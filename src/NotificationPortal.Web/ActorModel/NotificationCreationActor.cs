@@ -26,10 +26,10 @@ namespace NotificationPortal.Web.ActorModel
 
         public NotificationCreationActor()
         {
-            Receive<FirebaseNotificationSentMessage>(message =>
+            Receive<FirebaseInitialChallengeNotificationSentMessage>(message =>
                 SaveNotification(message.ChallengeEntry.Id, message.ChallengeNotification));
 
-            Receive<FirebaseResponseNotificationSentMessage>(message =>
+            Receive<FirebaseChallengeResponseNotificationSentMessage>(message =>
                 SaveNotification(message.ChallengeEntry.Id, message.ChallengeNotification));
         }
     }

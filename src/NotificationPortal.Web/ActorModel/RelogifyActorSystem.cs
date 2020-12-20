@@ -28,14 +28,14 @@ namespace NotificationPortal.Web.ActorModel
             system.EventStream.Subscribe(signalRActor, typeof(ChallengeStatusUpdatedMessage));
 
             var challengeUpdateActor = system.ActorOf<ChallengeUpdateActor>("challenge-update-actor");
-            system.EventStream.Subscribe(challengeUpdateActor, typeof(FirebaseNotificationSentMessage));
-            system.EventStream.Subscribe(challengeUpdateActor, typeof(FirebaseResponseNotificationSentMessage));
+            system.EventStream.Subscribe(challengeUpdateActor, typeof(FirebaseInitialChallengeNotificationSentMessage));
+            system.EventStream.Subscribe(challengeUpdateActor, typeof(FirebaseChallengeResponseNotificationSentMessage));
             system.EventStream.Subscribe(challengeUpdateActor, typeof(ChallengeAcceptedMessage));
             system.EventStream.Subscribe(challengeUpdateActor, typeof(ChallengeDeclinedMessage));
 
             var notificationCreationActor = system.ActorOf<NotificationCreationActor>("notification-creation-actor");
-            system.EventStream.Subscribe(notificationCreationActor, typeof(FirebaseNotificationSentMessage));
-            system.EventStream.Subscribe(notificationCreationActor, typeof(FirebaseResponseNotificationSentMessage));
+            system.EventStream.Subscribe(notificationCreationActor, typeof(FirebaseInitialChallengeNotificationSentMessage));
+            system.EventStream.Subscribe(notificationCreationActor, typeof(FirebaseChallengeResponseNotificationSentMessage));
 
             return new RelogifyActorModel { ActorSystem = system, ChallengeCreationActor = challengeCreationActor };
         }

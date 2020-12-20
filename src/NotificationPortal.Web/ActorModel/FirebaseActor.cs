@@ -136,7 +136,7 @@ namespace NotificationPortal.Web.ActorModel
             FakeSendResponseToFirebase(challengeEntry, notificationType)
                 .ContinueWith(sendToFirebaseTask =>
                     eventStream.Publish(
-                        new FirebaseResponseNotificationSentMessage
+                        new FirebaseChallengeResponseNotificationSentMessage
                         {
                             ChallengeEntry = challengeEntry,
                             ChallengeNotification = sendToFirebaseTask.Result
@@ -151,7 +151,7 @@ namespace NotificationPortal.Web.ActorModel
                 FakeSendToFirebase(message.ChallengeEntry)
                     .ContinueWith(sendToFirebaseTask =>
                         eventStream.Publish(
-                            new FirebaseNotificationSentMessage
+                            new FirebaseInitialChallengeNotificationSentMessage
                             {
                                 ChallengeEntry = message.ChallengeEntry,
                                 ChallengeNotification = sendToFirebaseTask.Result

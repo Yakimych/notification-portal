@@ -41,7 +41,7 @@ namespace NotificationPortal.Web.ActorModel
 
         public ChallengeUpdateActor()
         {
-            Receive<FirebaseNotificationSentMessage>(message =>
+            Receive<FirebaseInitialChallengeNotificationSentMessage>(message =>
             {
                 using var serviceScope = Context.CreateScope();
                 using var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
@@ -62,7 +62,7 @@ namespace NotificationPortal.Web.ActorModel
             Receive<ChallengeDeclinedMessage>(message =>
                 UpdateStatusForChallengeEntry(message.ChallengeEntryId, ChallengeStatus.Declining));
 
-            Receive<FirebaseResponseNotificationSentMessage>(message =>
+            Receive<FirebaseChallengeResponseNotificationSentMessage>(message =>
             {
                 using var serviceScope = Context.CreateScope();
                 using var dbContext = serviceScope.ServiceProvider.GetService<ApplicationDbContext>();
