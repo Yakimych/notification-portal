@@ -1,7 +1,6 @@
 using System;
 using Akka.Actor;
 using NotificationPortal.Data;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace NotificationPortal.Web.ActorModel
 {
@@ -12,8 +11,7 @@ namespace NotificationPortal.Web.ActorModel
             Receive<ChallengeIssuedMessage>(message =>
             {
                 using var serviceScope = Context.CreateScope();
-                var challengePersistence = serviceScope.ServiceProvider.GetService<ChallengePersistence>();
-                // TODO: Handle error if ChallengePersistence is not registered
+                var challengePersistence = ServiceScopeHelper.GetService<ChallengePersistence>(serviceScope);
 
                 var eventStream = Context.System.EventStream;
 
@@ -26,7 +24,7 @@ namespace NotificationPortal.Web.ActorModel
                     Date = DateTime.UtcNow
                 };
 
-                challengePersistence?.SaveToDb(newChallenge).ContinueWith(saveChallengeTask =>
+                challengePersistence.SaveToDb(newChallenge).ContinueWith(saveChallengeTask =>
                     eventStream.Publish(new ChallengeEntrySavedMessage { ChallengeEntry = saveChallengeTask.Result }));
             });
         }
