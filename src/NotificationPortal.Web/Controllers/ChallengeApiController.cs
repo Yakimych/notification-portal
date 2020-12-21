@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Akka.Actor;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NotificationPortal.Data;
 using NotificationPortal.Web.ActorModel;
 using NotificationPortal.Web.Models;
 
@@ -15,32 +14,19 @@ namespace NotificationPortal.Web.Controllers
     {
         private readonly RelogifyActorModel _relogifyActorModel;
 
-        // TODO: Do not use dbContext directly in controllers
-        private readonly ApplicationDbContext _dbContext;
-
-        public ChallengeApiController(ApplicationDbContext dbContext, RelogifyActorModel relogifyActorModel)
+        public ChallengeApiController(RelogifyActorModel relogifyActorModel)
         {
-            _dbContext = dbContext;
             _relogifyActorModel = relogifyActorModel;
         }
 
         [HttpGet]
         public async Task<ActionResult<ChallengeCollectionModel>> GetChallenges()
         {
-            var challenges =
-                await _dbContext.ChallengeEntries.Select(c => c.ToChallengeModel()).ToListAsync();
+            var challengesResponse =
+                await _relogifyActorModel.ChallengeActor.Ask<GetChallengesResponse>(new GetChallengesMessage());
 
-            return Ok(new ChallengeCollectionModel { Challenges = challenges });
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetChallenge(int id)
-        {
-            var challenge = await _dbContext.ChallengeEntries.FindAsync(id);
-            if (challenge == null)
-                return NotFound();
-
-            return Ok(challenge);
+            return Ok(new ChallengeCollectionModel
+                { Challenges = challengesResponse.ChallengeEntries.Select(c => c.ToChallengeModel()).ToList() });
         }
 
         [HttpPost]
