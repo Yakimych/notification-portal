@@ -15,14 +15,13 @@ namespace NotificationPortal.Web.ActorModel
 
                 var eventStream = Context.System.EventStream;
 
-                var newChallenge = new ChallengeEntry
-                {
-                    CommunityName = message.SendChallengeModel.CommunityName,
-                    FromPlayer = message.SendChallengeModel.FromPlayer,
-                    ToPlayer = message.SendChallengeModel.ToPlayer,
-                    Status = ChallengeStatus.Challenging,
-                    Date = DateTime.UtcNow
-                };
+                var newChallenge =
+                    new ChallengeEntry(
+                        CommunityName: message.SendChallengeModel.CommunityName,
+                        FromPlayer: message.SendChallengeModel.FromPlayer,
+                        ToPlayer: message.SendChallengeModel.ToPlayer,
+                        Status: ChallengeStatus.Challenging,
+                        Date: DateTime.UtcNow);
 
                 challengePersistence.SaveToDb(newChallenge).ContinueWith(saveChallengeTask =>
                     eventStream.Publish(new ChallengeEntrySavedMessage(ChallengeEntry: saveChallengeTask.Result)));

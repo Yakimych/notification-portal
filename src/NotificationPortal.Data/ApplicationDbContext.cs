@@ -11,8 +11,8 @@ namespace NotificationPortal.Data
         {
         }
 
-        public DbSet<ChallengeNotification> Notifications { get; init; }
-        public DbSet<ChallengeEntry> ChallengeEntries { get; init; }
+        public DbSet<ChallengeNotification> Notifications => Set<ChallengeNotification>();
+        public DbSet<ChallengeEntry> ChallengeEntries => Set<ChallengeEntry>();
     }
 
     public enum NotificationType
@@ -32,39 +32,21 @@ namespace NotificationPortal.Data
         Declined
     }
 
-    public record ChallengeEntry
+    public record ChallengeEntry(string CommunityName, string FromPlayer, string ToPlayer, ChallengeStatus Status, DateTime Date)
     {
-        public int Id { get; init; }
-
-        public string CommunityName { get; init; }
-
-        public string FromPlayer { get; init; }
-
-        public string ToPlayer { get; init; }
-
-        public ChallengeStatus Status { get; init; }
-
-        public DateTime Date { get; init; }
+        public int Id { get; private init; }
     }
 
-    public record ChallengeNotification
+    public record ChallengeNotification(string Topic, string Message, string FromPlayer, string FirebaseResponse, NotificationType Type, DateTime Date)
     {
-        public int Id { get; init; }
-
+        public int Id { get; private init; }
         public int ChallengeEntryId { get; init; }
 
-        public ChallengeEntry Challenge { get; init; }
-
-        public string Topic { get; init; }
-
-        public string Message { get; init; }
-
-        public string FromPlayer { get; init; }
-
-        public string FirebaseResponse { get; init; }
-
-        public NotificationType Type { get; init; }
-
-        public DateTime Date { get; init; }
+        private ChallengeEntry? _challenge;
+        public ChallengeEntry Challenge
+        {
+            get => _challenge ?? throw new InvalidOperationException($"Uninitialized property: {nameof(Challenge)}");
+            set => _challenge = value;
+        }
     }
 }

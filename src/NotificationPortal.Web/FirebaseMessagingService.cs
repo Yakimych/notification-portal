@@ -26,7 +26,8 @@ namespace NotificationPortal.Web
         public async Task<ChallengeNotification> SendMessageWithInitialChallenge(ChallengeEntry challenge)
         {
             var encodedTopic = $"{challenge.CommunityName}_{challenge.ToPlayer}".Base64UrlEncode();
-            var notificationMessage = $"{challenge.CommunityName}: {challenge.FromPlayer} has challenged you to a game!";
+            var notificationMessage =
+                $"{challenge.CommunityName}: {challenge.FromPlayer} has challenged you to a game!";
 
             var notificationTitle = "New Challenge!";
             var message = new Message
@@ -50,15 +51,14 @@ namespace NotificationPortal.Web
 
             var firebaseResponse = await FirebaseMessaging.DefaultInstance.SendAsync(message);
 
-            return new ChallengeNotification
-            {
-                Topic = encodedTopic,
-                Message = notificationMessage,
-                FromPlayer = challenge.FromPlayer,
-                Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
-                Type = NotificationType.Challenged,
-                FirebaseResponse = firebaseResponse
-            };
+            return new ChallengeNotification(
+                Topic: encodedTopic,
+                Message: notificationMessage,
+                FromPlayer: challenge.FromPlayer,
+                Date: DateTime.UtcNow, // TODO: Take in date as a method parameter
+                Type: NotificationType.Challenged,
+                FirebaseResponse: firebaseResponse
+            );
         }
 
         public async Task<ChallengeNotification> SendMessageWithResponseToChallenge(
@@ -90,15 +90,14 @@ namespace NotificationPortal.Web
 
             var firebaseResponse = await FirebaseMessaging.DefaultInstance.SendAsync(message);
 
-            return new ChallengeNotification
-            {
-                Topic = encodedTopic,
-                Message = notificationMessage,
-                FromPlayer = respondingPlayer,
-                Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
-                Type = response,
-                FirebaseResponse = firebaseResponse
-            };
+            return new ChallengeNotification(
+                Topic: encodedTopic,
+                Message: notificationMessage,
+                FromPlayer: respondingPlayer,
+                Date: DateTime.UtcNow, // TODO: Take in date as a method parameter
+                Type: response,
+                FirebaseResponse: firebaseResponse
+            );
         }
     }
 }
