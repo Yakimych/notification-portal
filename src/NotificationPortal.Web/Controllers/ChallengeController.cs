@@ -16,7 +16,8 @@ namespace NotificationPortal.Web.Controllers
         [HttpGet]
         public IActionResult SendChallenge()
         {
-            return View(new SendChallengeModel());
+            return View(
+                new SendChallengeModel(CommunityName: "", FromPlayer: "", ToPlayer: "", RequestStatusMessage: null));
         }
 
         [HttpGet]
@@ -32,7 +33,7 @@ namespace NotificationPortal.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            _actorModel.PublishMessage(new ChallengeIssuedMessage { SendChallengeModel = model });
+            _actorModel.PublishMessage(new ChallengeIssuedMessage(SendChallengeModel: model));
 
             return View(model with { RequestStatusMessage = "Challenge queued for sending" });
         }

@@ -15,9 +15,9 @@ namespace NotificationPortal.Web.Hubs
         }
 
         public void AcceptChallenge(int challengeId) =>
-            _relogifyActorModel.PublishMessage(new ChallengeAcceptedMessage { ChallengeEntryId = challengeId });
+            _relogifyActorModel.PublishMessage(new ChallengeAcceptedMessage(ChallengeEntryId: challengeId));
 
         public void DeclineChallenge(int challengeId) =>
-            _relogifyActorModel.PublishMessage(new ChallengeDeclinedMessage { ChallengeEntryId = challengeId });
+            _relogifyActorModel.PublishMessage(new ChallengeDeclinedMessage(ChallengeEntryId: challengeId));
     }
 }

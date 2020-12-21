@@ -1,9 +1,7 @@
 namespace NotificationPortal.Web.Models
 {
-    public record ErrorViewModel
+    public record ErrorViewModel(string RequestId)
     {
-        public string RequestId { get; init; }
-
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
     }
 }

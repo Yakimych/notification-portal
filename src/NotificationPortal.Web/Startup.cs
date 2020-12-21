@@ -54,6 +54,9 @@ namespace NotificationPortal.Web
             services.AddSingleton(provider =>
             {
                 var serviceScopeFactory = provider.GetService<IServiceScopeFactory>();
+                if (serviceScopeFactory is null)
+                    throw new Exception($"Failed to resolve {nameof(IServiceScopeFactory)} at startup.");
+
                 return RelogifyActorSystem.CreateModel(serviceScopeFactory);
             });
 

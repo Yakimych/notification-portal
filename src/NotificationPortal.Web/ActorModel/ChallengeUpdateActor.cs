@@ -19,7 +19,7 @@ namespace NotificationPortal.Web.ActorModel
                 .ContinueWith(updateTask =>
                     eventStream.Publish(
                         new ChallengeStatusUpdatedMessage
-                            { ChallengeEntry = updateTask.Result, NewStatus = newStatus }));
+                            (ChallengeEntry: updateTask.Result, NewStatus: newStatus)));
         }
 
         public ChallengeUpdateActor()

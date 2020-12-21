@@ -19,12 +19,7 @@ namespace NotificationPortal.Web.Controllers
         {
             var notifications = await _dbContext.Notifications.ToListAsync();
 
-            var notificationsViewModel = new NotificationsViewModel
-            {
-                Notifications = notifications
-            };
-
-            return View(notificationsViewModel);
+            return View(new NotificationsViewModel(notifications));
         }
     }
 }

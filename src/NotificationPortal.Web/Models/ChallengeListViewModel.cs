@@ -8,30 +8,13 @@ namespace NotificationPortal.Web.Models
 {
     // TODO: Use SwaggerSchema instead after this issue is resolved: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1920
     // [SwaggerSchema(Required = new[] { nameof(Id), nameof(ToPlayer) })]
-    public class ChallengeModel
-    {
-        [Required]
-        public int Id { get; init; }
+    public record ChallengeModel(
+        [Required] int Id,
+        [Required] string CommunityName,
+        [Required] string FromPlayer,
+        [Required] string ToPlayer,
+        [Required] ChallengeStatus Status,
+        [Required] DateTime Date);
 
-        [Required]
-        public string CommunityName { get; init; }
-
-        [Required]
-        public string FromPlayer { get; init; }
-
-        [Required]
-        public string ToPlayer { get; init; }
-
-        [Required]
-        public ChallengeStatus Status { get; init; }
-
-        [Required]
-        public DateTime Date { get; init; }
-    }
-
-    public class ChallengeCollectionModel
-    {
-        [Required]
-        public List<ChallengeModel> Challenges { get; init; }
-    }
+    public record ChallengeCollectionModel([Required] List<ChallengeModel> Challenges);
 }

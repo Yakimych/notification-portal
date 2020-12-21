@@ -1,3 +1,4 @@
+using System;
 using Akka.Actor;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,10 +7,18 @@ namespace NotificationPortal.Web.ActorModel
     // Source of implementation: https://havret.io/akka-entity-framework-core
     public class ServiceScopeExtension : IExtension
     {
-        private IServiceScopeFactory _serviceScopeFactory;
+        private IServiceScopeFactory? _serviceScopeFactory;
 
         public void Initialize(IServiceScopeFactory serviceScopeFactory) => _serviceScopeFactory = serviceScopeFactory;
-        public IServiceScope CreateScope() => _serviceScopeFactory.CreateScope();
+
+        public IServiceScope CreateScope()
+        {
+            if (_serviceScopeFactory is null)
+                throw new Exception(
+                    $"{nameof(ServiceScopeExtension)}: {nameof(_serviceScopeFactory)} is null. Has {nameof(Initialize)}  been called?");
+
+            return _serviceScopeFactory.CreateScope();
+        }
     }
 
     public class ServiceScopeExtensionIdProvider : ExtensionIdProvider<ServiceScopeExtension>

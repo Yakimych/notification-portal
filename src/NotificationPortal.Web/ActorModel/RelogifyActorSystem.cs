@@ -3,12 +3,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace NotificationPortal.Web.ActorModel
 {
-    public record RelogifyActorModel
+    public class RelogifyActorModel
     {
-        public ActorSystem ActorSystem { private get; init; }
-        public IActorRef ChallengeCreationActor { get; init; }
+        private readonly ActorSystem _actorSystem;
 
-        public void PublishMessage(object message) => ActorSystem.EventStream.Publish(message);
+        public RelogifyActorModel(ActorSystem actorSystem)
+        {
+            _actorSystem = actorSystem;
+        }
+
+        public void PublishMessage(object message) => _actorSystem.EventStream.Publish(message);
     }
 
     public static class RelogifyActorSystem
@@ -42,7 +46,7 @@ namespace NotificationPortal.Web.ActorModel
             system.EventStream.Subscribe(notificationCreationActor,
                 typeof(FirebaseChallengeResponseNotificationSentMessage));
 
-            return new RelogifyActorModel { ActorSystem = system, ChallengeCreationActor = challengeCreationActor };
+            return new RelogifyActorModel(actorSystem: system);
         }
     }
 }
