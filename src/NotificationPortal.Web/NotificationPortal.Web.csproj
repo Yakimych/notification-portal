@@ -3,12 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-NotificationPortal.Web-0F6E2301-571F-418A-9F80-529CB46AAEAF</UserSecretsId>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.16" />
-    <PackageReference Include="Hangfire.Core" Version="1.7.16" />
-    <PackageReference Include="Hangfire.Storage.SQLite" Version="0.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.0" />
     <PackageReference Include="FirebaseAdmin" Version="1.17.0" />

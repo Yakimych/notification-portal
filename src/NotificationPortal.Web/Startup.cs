@@ -1,7 +1,4 @@
 using System;
-using Hangfire;
-using Hangfire.Dashboard;
-using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
@@ -41,14 +38,6 @@ namespace NotificationPortal.Web
                 .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
             services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "NotificationPortal", Version = "v1" }));
             services.AddSignalR();
-
-            services.AddHangfire(configuration =>
-                configuration
-                    .UseSimpleAssemblyNameTypeSerializer()
-                    .UseRecommendedSerializerSettings()
-                    .UseSQLiteStorage()
-            );
-            services.AddHangfireServer();
 
             services.AddSingleton(provider =>
             {
@@ -98,9 +87,6 @@ namespace NotificationPortal.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseHangfireDashboard("/hangfire",
-                new DashboardOptions { Authorization = new[] { new HangfireAuthorizationFilter() } });
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -110,18 +96,6 @@ namespace NotificationPortal.Web
 
                 endpoints.MapHub<ChallengeHub>("/challengehub");
             });
-        }
-
-        public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
-        {
-            public bool Authorize(DashboardContext context)
-            {
-                var httpContext = context.GetHttpContext();
-
-                // Allow all authenticated users to see the Dashboard
-                // TODO: Restrict to admin
-                return httpContext.User.Identity.IsAuthenticated;
-            }
         }
     }
 }
