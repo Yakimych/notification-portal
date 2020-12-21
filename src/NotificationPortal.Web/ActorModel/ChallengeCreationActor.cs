@@ -4,9 +4,9 @@ using NotificationPortal.Data;
 
 namespace NotificationPortal.Web.ActorModel
 {
-    public class ChallengeCreationActor : ReceiveActor
+    public class ChallengeActor : ReceiveActor
     {
-        public ChallengeCreationActor()
+        public ChallengeActor()
         {
             Receive<ChallengeIssuedMessage>(message =>
             {

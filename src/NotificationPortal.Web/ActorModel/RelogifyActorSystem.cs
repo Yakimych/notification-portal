@@ -18,7 +18,7 @@ namespace NotificationPortal.Web.ActorModel
             var system = ActorSystem.Create("relogify-actor-system");
             system.AddServiceScopeFactory(serviceScopeFactory);
 
-            var challengeActor = system.ActorOf<ChallengeCreationActor>("challenge-creation-actor");
+            var challengeActor = system.ActorOf<ChallengeActor>("challenge-actor");
             system.EventStream.Subscribe(challengeActor, typeof(ChallengeIssuedMessage));
             system.EventStream.Subscribe(challengeActor, typeof(ChallengeAcceptedMessage));
             system.EventStream.Subscribe(challengeActor, typeof(ChallengeDeclinedMessage));
