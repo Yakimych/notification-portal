@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using NotificationPortal.Data;
 
 namespace NotificationPortal.Data
 {
@@ -31,9 +30,18 @@ namespace NotificationPortal.Data
             await dbContext.SaveChangesAsync();
         }
 
+        private static T TryResolve<T>(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetService<T>();
+            if (userManager is null)
+                throw new Exception($"{typeof(T)} has not been registered.");
+
+            return userManager;
+        }
+
         private static async Task<string> EnsureUser(IServiceProvider serviceProvider, string email, string password)
         {
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = TryResolve<UserManager<IdentityUser>>(serviceProvider);
             var user = await userManager.FindByNameAsync(email);
             if (user is null)
             {
@@ -54,15 +62,12 @@ namespace NotificationPortal.Data
 
         private static async Task<IdentityResult> EnsureRole(IServiceProvider serviceProvider, string uid, string role)
         {
-            var roleManager = serviceProvider.GetService<RoleManager<IdentityRole>>();
-
-            if (roleManager == null)
-                throw new Exception("roleManager null");
+            var roleManager = TryResolve<RoleManager<IdentityRole>>(serviceProvider);
 
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
 
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = TryResolve<UserManager<IdentityUser>>(serviceProvider);
 
             var user = await userManager.FindByIdAsync(uid);
             if (user == null)
