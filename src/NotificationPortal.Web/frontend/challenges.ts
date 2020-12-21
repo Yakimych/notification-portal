@@ -1,4 +1,4 @@
 import { createApp } from "vue";
-import Challengs from "./Challenges.vue";
+import Challenges from "./Challenges.vue";
 
-createApp(Challengs).mount("#challenges");
+createApp(Challenges).mount("#challenges");

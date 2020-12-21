@@ -10,8 +10,6 @@ module.exports = {
   entry: {
     index: getFileInFrontendDir("index.ts"),
     challenges: getFileInFrontendDir("challenges.ts"),
-    component1: getFileInFrontendDir("component1.ts"),
-    component2: getFileInFrontendDir("component2.ts"),
   },
   output: {
     path: path.resolve(__dirname, "wwwroot/transpiled"),
