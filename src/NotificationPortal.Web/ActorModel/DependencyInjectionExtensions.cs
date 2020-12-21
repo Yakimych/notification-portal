@@ -38,4 +38,16 @@ namespace NotificationPortal.Web.ActorModel
         public static IServiceScope CreateScope(this IActorContext context) =>
             ServiceScopeExtensionIdProvider.Instance.Get(context.System).CreateScope();
     }
+
+    public static class ServiceScopeHelper
+    {
+        public static T GetService<T>(IServiceScope serviceScope)
+        {
+            var resolvedService = serviceScope.ServiceProvider.GetService<T>();
+            if (resolvedService is null)
+                throw new Exception($"{nameof(resolvedService)} is null. Has {typeof(T)} been registered?");
+
+            return resolvedService;
+        }
+    }
 }

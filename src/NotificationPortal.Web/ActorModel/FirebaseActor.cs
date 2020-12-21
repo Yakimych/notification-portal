@@ -1,6 +1,5 @@
 using Akka.Actor;
 using NotificationPortal.Data;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace NotificationPortal.Web.ActorModel
 {
@@ -10,11 +9,10 @@ namespace NotificationPortal.Web.ActorModel
             ChallengeEntry challengeEntry, NotificationType notificationType)
         {
             using var serviceScope = Context.CreateScope();
-            var firebaseMessagingService = serviceScope.ServiceProvider.GetService<FirebaseMessagingService>();
-            // TODO: Throw in firebaseMessagingService is not registered
+            var firebaseMessagingService = ServiceScopeHelper.GetService<FirebaseMessagingService>(serviceScope);
 
             var eventStream = Context.System.EventStream;
-            firebaseMessagingService?.SendMessageWithResponseToChallenge(challengeEntry, notificationType)
+            firebaseMessagingService.SendMessageWithResponseToChallenge(challengeEntry, notificationType)
                 .ContinueWith(sendToFirebaseTask =>
                     eventStream.Publish(
                         new FirebaseChallengeResponseNotificationSentMessage(
@@ -27,11 +25,11 @@ namespace NotificationPortal.Web.ActorModel
             Receive<ChallengeEntrySavedMessage>(message =>
             {
                 using var serviceScope = Context.CreateScope();
-                var firebaseMessagingService = serviceScope.ServiceProvider.GetService<FirebaseMessagingService>();
-                // TODO: Throw in firebaseMessagingService is not registered
+                var firebaseMessagingService =
+                    ServiceScopeHelper.GetService<FirebaseMessagingService>(serviceScope);
 
                 var eventStream = Context.System.EventStream;
-                firebaseMessagingService?.SendMessageWithInitialChallenge(message.ChallengeEntry)
+                firebaseMessagingService.SendMessageWithInitialChallenge(message.ChallengeEntry)
                     .ContinueWith(sendToFirebaseTask =>
                         eventStream.Publish(
                             new FirebaseInitialChallengeNotificationSentMessage(

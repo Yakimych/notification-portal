@@ -1,6 +1,5 @@
 using Akka.Actor;
 using NotificationPortal.Data;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace NotificationPortal.Web.ActorModel
 {
@@ -9,10 +8,9 @@ namespace NotificationPortal.Web.ActorModel
         private void SaveNotification(int challengeEntryId, ChallengeNotification challengeNotification)
         {
             using var serviceScope = Context.CreateScope();
-            var notificationPersistence = serviceScope.ServiceProvider.GetService<NotificationPersistence>();
+            var notificationPersistence = ServiceScopeHelper.GetService<NotificationPersistence>(serviceScope);
 
-            // TODO: Make sure an error is correctly handled if NotificationPersistence is not registered
-            notificationPersistence?.AddNotification(challengeEntryId, challengeNotification);
+            notificationPersistence.AddNotification(challengeEntryId, challengeNotification);
         }
 
         public NotificationCreationActor()

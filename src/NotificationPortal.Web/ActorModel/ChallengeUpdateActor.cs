@@ -1,7 +1,6 @@
 using System;
 using Akka.Actor;
 using NotificationPortal.Data;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace NotificationPortal.Web.ActorModel
 {
@@ -10,12 +9,11 @@ namespace NotificationPortal.Web.ActorModel
         private void UpdateStatusForChallengeEntry(int challengeEntryId, ChallengeStatus newStatus, DateTime timestamp)
         {
             using var serviceScope = Context.CreateScope();
-            var challengePersistence = serviceScope.ServiceProvider.GetService<ChallengePersistence>();
-            // TODO: Handle error if challengePersistence is not registered
+            var challengePersistence = ServiceScopeHelper.GetService<ChallengePersistence>(serviceScope);
 
             var eventStream = Context.System.EventStream;
 
-            challengePersistence?.UpdateStatusInDb(challengeEntryId, newStatus, timestamp)
+            challengePersistence.UpdateStatusInDb(challengeEntryId, newStatus, timestamp)
                 .ContinueWith(updateTask =>
                     eventStream.Publish(
                         new ChallengeStatusUpdatedMessage
