@@ -44,6 +44,30 @@ namespace NotificationPortal.Web.ActorModel
                     : ChallengeStatus.Declined;
                 UpdateStatusForChallengeEntry(message.ChallengeEntry.Id, newStatus, DateTime.UtcNow);
             });
+
+            Receive<GetChallengesMessage>(_ =>
+            {
+                var serviceScope = Context.CreateScope();
+                var challengePersistence = ServiceScopeHelper.GetService<ChallengePersistence>(serviceScope);
+
+                var originalSender = Sender;
+                challengePersistence
+                    .GetAllFromDb()
+                    .ContinueWith(getChallengesTask =>
+                        new ChallengesFetchedMessage
+                        {
+                            ServiceScope = serviceScope,
+                            OriginalSender = originalSender,
+                            ChallengeEntries = getChallengesTask.Result
+                        })
+                    .PipeTo(Self);
+            });
+
+            Receive<ChallengesFetchedMessage>(message =>
+            {
+                message.ServiceScope.Dispose();
+                message.OriginalSender.Tell(new GetChallengesResponse { ChallengeEntries = message.ChallengeEntries });
+            });
         }
 
         private void UpdateStatusForChallengeEntry(int challengeEntryId, ChallengeStatus newStatus, DateTime timestamp)
