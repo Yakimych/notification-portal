@@ -14,12 +14,7 @@ namespace NotificationPortal.Data
             _dbContext = dbContext;
         }
 
-        public async Task<List<ChallengeEntry>> GetAllFromDb()
-        {
-            // TODO: Remove
-            await Task.Delay(5000);
-            return await _dbContext.ChallengeEntries.ToListAsync();
-        }
+        public Task<List<ChallengeEntry>> GetAllFromDb() => _dbContext.ChallengeEntries.ToListAsync();
 
         public async Task<ChallengeEntry> SaveToDb(ChallengeEntry challengeEntry)
         {
