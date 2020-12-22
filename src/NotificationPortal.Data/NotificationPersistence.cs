@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 
 namespace NotificationPortal.Data
@@ -11,7 +12,10 @@ namespace NotificationPortal.Data
             _dbContext = dbContext;
         }
 
-        public async Task AddNotification(int challengeEntryId, ChallengeNotification challengeNotification)
+        public Task<ImmutableList<ChallengeNotification>> GetAllFromDb() =>
+            _dbContext.Notifications.ToImmutableListAsync();
+
+        public async Task AddToDb(int challengeEntryId, ChallengeNotification challengeNotification)
         {
             var challengeNotificationToSave = challengeNotification with { ChallengeEntryId = challengeEntryId };
 

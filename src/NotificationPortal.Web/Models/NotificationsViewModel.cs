@@ -1,10 +1,10 @@
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using NotificationPortal.Data;
 
 namespace NotificationPortal.Web.Models
 {
     public record NotificationsViewModel
     {
-        public List<ChallengeNotification> Notifications { get; init; }
+        public ImmutableList<ChallengeNotification> Notifications { get; init; }
     }
 }

@@ -1,27 +1,29 @@
 ﻿using System.Threading.Tasks;
+using Akka.Actor;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using NotificationPortal.Data;
+using NotificationPortal.Web.ActorModel;
 using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.Controllers
 {
     public class NotificationsController : Controller
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly RelogifyActorModel _relogifyActorModel;
 
-        public NotificationsController(ApplicationDbContext dbContext)
+        public NotificationsController(RelogifyActorModel relogifyActorModel)
         {
-            _dbContext = dbContext;
+            _relogifyActorModel = relogifyActorModel;
         }
 
         public async Task<IActionResult> Index()
         {
-            var notifications = await _dbContext.Notifications.ToListAsync();
+            var notificationsResponse =
+                await _relogifyActorModel.NotificationActor
+                    .Ask<GetNotificationsResponse>(new GetNotificationsMessage());
 
             var notificationsViewModel = new NotificationsViewModel
             {
-                Notifications = notifications
+                Notifications = notificationsResponse.Notifications
             };
 
             return View(notificationsViewModel);

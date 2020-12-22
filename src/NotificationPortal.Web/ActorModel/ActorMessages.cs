@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using NotificationPortal.Data;
 using NotificationPortal.Web.Models;
 
@@ -23,7 +23,14 @@ namespace NotificationPortal.Web.ActorModel
 
     public record GetChallengesResponse
     {
-        public List<ChallengeEntry> ChallengeEntries { get; init; }
+        public ImmutableList<ChallengeEntry> ChallengeEntries { get; init; }
+    }
+
+    public record GetNotificationsMessage { }
+
+    public record GetNotificationsResponse
+    {
+        public ImmutableList<ChallengeNotification> Notifications { get; init; }
     }
 
     public record ChallengeEntrySavedMessage

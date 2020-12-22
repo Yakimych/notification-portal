@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +14,9 @@ namespace NotificationPortal.Data
             _dbContext = dbContext;
         }
 
-        public Task<List<ChallengeEntry>> GetAllFromDb() => _dbContext.ChallengeEntries.ToListAsync();
+        public Task<ImmutableList<ChallengeEntry>> GetAllFromDb() => _dbContext.ChallengeEntries.ToImmutableListAsync();
 
-        public async Task<ChallengeEntry> SaveToDb(ChallengeEntry challengeEntry)
+        public async Task<ChallengeEntry> AddToDb(ChallengeEntry challengeEntry)
         {
             await _dbContext.ChallengeEntries.AddAsync(challengeEntry);
             await _dbContext.SaveChangesAsync();

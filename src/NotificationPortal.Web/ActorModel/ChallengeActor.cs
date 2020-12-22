@@ -24,7 +24,7 @@ namespace NotificationPortal.Web.ActorModel
                     Date = DateTime.UtcNow
                 };
 
-                challengePersistence.SaveToDb(newChallenge).ContinueWith(saveChallengeTask =>
+                challengePersistence.AddToDb(newChallenge).ContinueWith(saveChallengeTask =>
                     eventStream.Publish(new ChallengeEntrySavedMessage { ChallengeEntry = saveChallengeTask.Result }));
             });
 
