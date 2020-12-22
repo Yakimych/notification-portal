@@ -16,10 +16,10 @@ namespace NotificationPortal.Web.ActorModel
                 .ContinueWith(sendToFirebaseTask =>
                     eventStream.Publish(
                         new FirebaseChallengeResponseNotificationSentMessage
-                        {
-                            ChallengeEntry = challengeEntry,
-                            ChallengeNotification = sendToFirebaseTask.Result
-                        }));
+                        (
+                            ChallengeEntry: challengeEntry,
+                            ChallengeNotification: sendToFirebaseTask.Result
+                        )));
         }
 
         public FirebaseActor()
@@ -35,10 +35,10 @@ namespace NotificationPortal.Web.ActorModel
                     .ContinueWith(sendToFirebaseTask =>
                         eventStream.Publish(
                             new FirebaseInitialChallengeNotificationSentMessage
-                            {
-                                ChallengeEntry = message.ChallengeEntry,
-                                ChallengeNotification = sendToFirebaseTask.Result
-                            }));
+                            (
+                                ChallengeEntry: message.ChallengeEntry,
+                                ChallengeNotification: sendToFirebaseTask.Result
+                            )));
             });
 
             Receive<ChallengeStatusUpdatedMessage>(message =>

@@ -25,7 +25,7 @@ namespace NotificationPortal.Web.ActorModel
                 };
 
                 challengePersistence.AddToDb(newChallenge).ContinueWith(saveChallengeTask =>
-                    eventStream.Publish(new ChallengeEntrySavedMessage { ChallengeEntry = saveChallengeTask.Result }));
+                    eventStream.Publish(new ChallengeEntrySavedMessage(ChallengeEntry: saveChallengeTask.Result)));
             });
 
             Receive<FirebaseInitialChallengeNotificationSentMessage>(message =>
@@ -55,7 +55,7 @@ namespace NotificationPortal.Web.ActorModel
                     .ContinueWith(getChallengesTask =>
                     {
                         serviceScope.Dispose();
-                        return new GetChallengesResponse { ChallengeEntries = getChallengesTask.Result };
+                        return new GetChallengesResponse(ChallengeEntries: getChallengesTask.Result);
                     })
                     .PipeTo(Sender);
             });
@@ -72,7 +72,7 @@ namespace NotificationPortal.Web.ActorModel
                 .ContinueWith(updateTask =>
                     eventStream.Publish(
                         new ChallengeStatusUpdatedMessage
-                            { ChallengeEntry = updateTask.Result, NewStatus = newStatus }));
+                            (ChallengeEntry: updateTask.Result, NewStatus: newStatus)));
         }
     }
 }

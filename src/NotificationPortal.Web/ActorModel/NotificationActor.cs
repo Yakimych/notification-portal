@@ -31,7 +31,7 @@ namespace NotificationPortal.Web.ActorModel
                     .ContinueWith(getNotificationsTask =>
                     {
                         serviceScope.Dispose();
-                        return new GetNotificationsResponse { Notifications = getNotificationsTask.Result };
+                        return new GetNotificationsResponse(Notifications: getNotificationsTask.Result);
                     })
                     .PipeTo(Sender);
             });

@@ -4,55 +4,31 @@ using NotificationPortal.Web.Models;
 
 namespace NotificationPortal.Web.ActorModel
 {
-    public record ChallengeIssuedMessage
+    public record ChallengeIssuedMessage (SendChallengeModel SendChallengeModel);
+
+    public record ChallengeAcceptedMessage (int ChallengeEntryId);
+
+    public record ChallengeDeclinedMessage (int ChallengeEntryId);
+
+    public record GetChallengesMessage
     {
-        public SendChallengeModel SendChallengeModel { get; init; }
     }
 
-    public record ChallengeAcceptedMessage
+    public record GetChallengesResponse (ImmutableList<ChallengeEntry> ChallengeEntries);
+
+    public record GetNotificationsMessage
     {
-        public int ChallengeEntryId { get; init; }
     }
 
-    public record ChallengeDeclinedMessage
-    {
-        public int ChallengeEntryId { get; init; }
-    }
+    public record GetNotificationsResponse (ImmutableList<ChallengeNotification> Notifications);
 
-    public record GetChallengesMessage { }
+    public record ChallengeEntrySavedMessage (ChallengeEntry ChallengeEntry);
 
-    public record GetChallengesResponse
-    {
-        public ImmutableList<ChallengeEntry> ChallengeEntries { get; init; }
-    }
+    public record FirebaseInitialChallengeNotificationSentMessage (
+        ChallengeEntry ChallengeEntry, ChallengeNotification ChallengeNotification);
 
-    public record GetNotificationsMessage { }
+    public record FirebaseChallengeResponseNotificationSentMessage (
+        ChallengeEntry ChallengeEntry, ChallengeNotification ChallengeNotification);
 
-    public record GetNotificationsResponse
-    {
-        public ImmutableList<ChallengeNotification> Notifications { get; init; }
-    }
-
-    public record ChallengeEntrySavedMessage
-    {
-        public ChallengeEntry ChallengeEntry { get; init; }
-    }
-
-    public record FirebaseInitialChallengeNotificationSentMessage
-    {
-        public ChallengeEntry ChallengeEntry { get; init; }
-        public ChallengeNotification ChallengeNotification { get; init; }
-    }
-
-    public record FirebaseChallengeResponseNotificationSentMessage
-    {
-        public ChallengeEntry ChallengeEntry { get; init; }
-        public ChallengeNotification ChallengeNotification { get; init; }
-    }
-
-    public record ChallengeStatusUpdatedMessage
-    {
-        public ChallengeEntry ChallengeEntry { get; init; }
-        public ChallengeStatus NewStatus { get; init; }
-    }
+    public record ChallengeStatusUpdatedMessage (ChallengeEntry ChallengeEntry, ChallengeStatus NewStatus);
 }
