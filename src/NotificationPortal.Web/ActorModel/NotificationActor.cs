@@ -10,7 +10,7 @@ namespace NotificationPortal.Web.ActorModel
             using var serviceScope = Context.CreateScope();
             var notificationPersistence = ServiceScopeHelper.GetService<NotificationPersistence>(serviceScope);
 
-            notificationPersistence.AddToDb(challengeEntryId, challengeNotification);
+            var _ = notificationPersistence.AddToDb(challengeEntryId, challengeNotification);
         }
 
         public NotificationActor()
