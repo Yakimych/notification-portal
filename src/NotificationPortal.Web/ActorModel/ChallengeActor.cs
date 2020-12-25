@@ -21,7 +21,7 @@ namespace NotificationPortal.Web.ActorModel
                     FromPlayer = message.SendChallengeModel.FromPlayer,
                     ToPlayer = message.SendChallengeModel.ToPlayer,
                     Status = ChallengeStatus.Challenging,
-                    Date = DateTime.UtcNow
+                    Date = message.TimeStamp
                 };
 
                 challengePersistence.AddToDb(newChallenge).ContinueWith(saveChallengeTask =>
@@ -29,20 +29,21 @@ namespace NotificationPortal.Web.ActorModel
             });
 
             Receive<FirebaseInitialChallengeNotificationSentMessage>(message =>
-                UpdateStatusForChallengeEntry(message.ChallengeEntry.Id, ChallengeStatus.Challenged, DateTime.UtcNow));
+                UpdateStatusForChallengeEntry(
+                    message.ChallengeEntry.Id, ChallengeStatus.Challenged, message.ChallengeNotification.Date));
 
             Receive<ChallengeAcceptedMessage>(message =>
-                UpdateStatusForChallengeEntry(message.ChallengeEntryId, ChallengeStatus.Accepting, DateTime.UtcNow));
+                UpdateStatusForChallengeEntry(message.ChallengeEntryId, ChallengeStatus.Accepting, message.TimeStamp));
 
             Receive<ChallengeDeclinedMessage>(message =>
-                UpdateStatusForChallengeEntry(message.ChallengeEntryId, ChallengeStatus.Declining, DateTime.UtcNow));
+                UpdateStatusForChallengeEntry(message.ChallengeEntryId, ChallengeStatus.Declining, message.TimeStamp));
 
             Receive<FirebaseChallengeResponseNotificationSentMessage>(message =>
             {
                 var newStatus = message.ChallengeNotification.Type == NotificationType.Accepted
                     ? ChallengeStatus.Accepted
                     : ChallengeStatus.Declined;
-                UpdateStatusForChallengeEntry(message.ChallengeEntry.Id, newStatus, DateTime.UtcNow);
+                UpdateStatusForChallengeEntry(message.ChallengeEntry.Id, newStatus, message.ChallengeNotification.Date);
             });
 
             Receive<GetChallengesMessage>(_ =>

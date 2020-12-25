@@ -34,7 +34,8 @@ namespace NotificationPortal.Web.Controllers
         {
             try
             {
-                _relogifyActorModel.PublishMessage(new ChallengeIssuedMessage(SendChallengeModel: model));
+                _relogifyActorModel.PublishMessage(
+                    new ChallengeIssuedMessage(SendChallengeModel: model, TimeStamp: DateTime.UtcNow));
                 return Ok();
             }
             catch (Exception ex)
@@ -47,14 +48,16 @@ namespace NotificationPortal.Web.Controllers
         [HttpPost("rpc/accept/{id}")]
         public IActionResult AcceptChallenge(int id)
         {
-            _relogifyActorModel.PublishMessage(new ChallengeAcceptedMessage(ChallengeEntryId: id));
+            _relogifyActorModel.PublishMessage(
+                new ChallengeAcceptedMessage(ChallengeEntryId: id, TimeStamp: DateTime.UtcNow));
             return NoContent();
         }
 
         [HttpPost("rpc/decline/{id}")]
         public IActionResult DeclineChallenge(int id)
         {
-            _relogifyActorModel.PublishMessage(new ChallengeDeclinedMessage(ChallengeEntryId: id));
+            _relogifyActorModel.PublishMessage(
+                new ChallengeDeclinedMessage(ChallengeEntryId: id, TimeStamp: DateTime.UtcNow));
             return NoContent();
         }
     }

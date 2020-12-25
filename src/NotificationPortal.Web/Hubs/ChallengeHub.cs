@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.SignalR;
 using NotificationPortal.Web.ActorModel;
 
@@ -15,9 +16,11 @@ namespace NotificationPortal.Web.Hubs
         }
 
         public void AcceptChallenge(int challengeId) =>
-            _relogifyActorModel.PublishMessage(new ChallengeAcceptedMessage(ChallengeEntryId: challengeId));
+            _relogifyActorModel.PublishMessage(
+                new ChallengeAcceptedMessage(ChallengeEntryId: challengeId, TimeStamp: DateTime.UtcNow));
 
         public void DeclineChallenge(int challengeId) =>
-            _relogifyActorModel.PublishMessage(new ChallengeDeclinedMessage(ChallengeEntryId: challengeId));
+            _relogifyActorModel.PublishMessage(
+                new ChallengeDeclinedMessage(ChallengeEntryId: challengeId, TimeStamp: DateTime.UtcNow));
     }
 }

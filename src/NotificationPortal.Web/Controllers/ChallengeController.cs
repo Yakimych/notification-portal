@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using NotificationPortal.Web.ActorModel;
 using NotificationPortal.Web.Models;
 
@@ -32,7 +33,8 @@ namespace NotificationPortal.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            _actorModel.PublishMessage(new ChallengeIssuedMessage(SendChallengeModel: model));
+            _actorModel.PublishMessage(
+                new ChallengeIssuedMessage(SendChallengeModel: model, TimeStamp: DateTime.UtcNow));
 
             return View(model with { RequestStatusMessage = "Challenge queued for sending" });
         }

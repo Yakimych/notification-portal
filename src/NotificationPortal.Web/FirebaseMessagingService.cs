@@ -55,7 +55,7 @@ namespace NotificationPortal.Web
                 Topic = encodedTopic,
                 Message = notificationMessage,
                 FromPlayer = challenge.FromPlayer,
-                Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
+                Date = DateTime.UtcNow,
                 Type = NotificationType.Challenged,
                 FirebaseResponse = firebaseResponse
             };
@@ -95,7 +95,7 @@ namespace NotificationPortal.Web
                 Topic = encodedTopic,
                 Message = notificationMessage,
                 FromPlayer = respondingPlayer,
-                Date = DateTime.UtcNow, // TODO: Take in date as a method parameter
+                Date = DateTime.UtcNow,
                 Type = response,
                 FirebaseResponse = firebaseResponse
             };
